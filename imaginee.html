@@ -3,19 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title data-i18n="pageTitle">زياد أبولائطة - مصمم جرافيك محترف</title>
+    <title data-i18n="pageTitle">زياد أبولائطة - مصمم جرافيك</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #0f172a;
-            --secondary: #1e293b;
-            --accent: #0ea5e9;
-            --accent-dark: #0284c7;
-            --text-light: #94a3b8;
-            --text-dark: #1e293b;
-            --bg-light: #f8fafc;
+            /* Blue Dark Theme Palette */
+            --bg-body: #020617;      /* Very dark blue (almost black) */
+            --bg-secondary: #0f172a; /* Slate 900 */
+            --bg-card: #1e293b;      /* Slate 800 */
+            
+            --accent: #3b82f6;       /* Bright Blue */
+            --accent-glow: rgba(59, 130, 246, 0.5);
+            
+            --text-main: #f8fafc;    /* White-ish */
+            --text-muted: #94a3b8;   /* Light Grey */
+            
+            --border-color: #334155;
+            
             --font-ar: 'IBM Plex Sans Arabic', sans-serif;
             --font-en: 'Poppins', sans-serif;
         }
@@ -28,11 +34,10 @@
 
         body {
             font-family: var(--font-ar);
-            background: var(--bg-light);
-            color: var(--text-dark);
+            background: var(--bg-body);
+            color: var(--text-main);
             overflow-x: hidden;
             line-height: 1.7;
-            transition: direction 0.3s ease;
         }
 
         /* LTR Support */
@@ -40,38 +45,31 @@
             font-family: var(--font-en);
         }
 
-        /* Navbar */
+        /* Navbar - Mobile Optimized */
         nav {
             position: fixed;
             width: 100%;
             top: 0;
             z-index: 1000;
-            background: rgba(15, 23, 42, 0.98);
-            backdrop-filter: blur(20px);
-            padding: 20px 0;
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-            animation: slideDown 0.6s ease;
-        }
-
-        @keyframes slideDown {
-            from { transform: translateY(-100%); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+            background: rgba(2, 6, 23, 0.95);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 15px 0;
         }
 
         .nav-container {
             max-width: 1400px;
             margin: 0 auto;
-            padding: 0 40px;
+            padding: 0 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
         .logo {
-            font-size: 28px;
+            font-size: 24px;
             font-weight: 700;
-            color: white;
-            letter-spacing: -0.5px;
+            color: var(--text-main);
         }
 
         .logo span {
@@ -81,1145 +79,484 @@
         nav ul {
             display: flex;
             list-style: none;
-            gap: 40px;
-            align-items: center;
+            gap: 30px;
         }
 
         nav a {
             text-decoration: none;
-            color: rgba(255, 255, 255, 0.85);
+            color: var(--text-muted);
             font-weight: 500;
-            font-size: 15px;
-            transition: all 0.3s;
-            position: relative;
-        }
-
-        nav a:hover {
-            color: var(--accent);
-        }
-
-        nav a::before {
-            content: '';
-            position: absolute;
-            bottom: -8px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: var(--accent);
-            transition: width 0.3s ease;
-        }
-
-        nav a:hover::before {
-            width: 100%;
-        }
-
-        .lang-btn {
-            background: rgba(255,255,255,0.1);
-            border: 1px solid rgba(255,255,255,0.2);
-            color: white;
-            padding: 5px 12px;
-            border-radius: 20px;
-            cursor: pointer;
             font-size: 14px;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 5px;
+            transition: 0.3s;
         }
 
-        .lang-btn:hover {
-            background: var(--accent);
-            border-color: var(--accent);
+        nav a:hover, nav a.active {
+            color: var(--accent);
         }
 
         /* Hero Section */
         .hero {
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-            padding: 180px 40px 120px;
+            padding: 140px 20px 80px;
             position: relative;
             overflow: hidden;
         }
 
-        html[dir="ltr"] .hero {
-            background: linear-gradient(-135deg, #0f172a 0%, #1e293b 100%);
-        }
-
-        .hero::before {
-            content: '';
+        .hero-bg-glow {
             position: absolute;
+            top: -100px;
+            left: 50%;
+            transform: translateX(-50%);
             width: 600px;
             height: 600px;
-            background: radial-gradient(circle, rgba(14, 165, 233, 0.15) 0%, transparent 70%);
-            top: -200px;
-            left: -200px; /* RTL default */
-            animation: pulse 4s ease-in-out infinite;
-        }
-        
-        html[dir="ltr"] .hero::before {
-            left: auto; right: -200px;
-        }
-
-        .hero::after {
-            content: '';
-            position: absolute;
-            width: 500px;
-            height: 500px;
-            background: radial-gradient(circle, rgba(14, 165, 233, 0.1) 0%, transparent 70%);
-            bottom: -150px;
-            right: -150px; /* RTL default */
-            animation: pulse 5s ease-in-out infinite reverse;
-        }
-
-        html[dir="ltr"] .hero::after {
-            right: auto; left: -150px;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.1); opacity: 0.8; }
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, transparent 70%);
+            z-index: 0;
+            pointer-events: none;
         }
 
         .hero-container {
-            max-width: 1400px;
+            max-width: 1200px;
             margin: 0 auto;
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 80px;
+            gap: 40px;
             align-items: center;
             position: relative;
             z-index: 1;
         }
 
         .hero-content h1 {
-            font-size: 64px;
+            font-size: 52px;
             font-weight: 700;
-            color: white;
             margin-bottom: 20px;
             line-height: 1.2;
-            animation: fadeInUp 0.8s ease;
         }
 
         .hero-content h1 span {
+            color: transparent;
+            -webkit-text-stroke: 1px var(--accent);
+            position: relative;
+        }
+        
+        .hero-content h1 span::before {
+            content: attr(data-text);
+            position: absolute;
+            left: 0;
+            width: 0;
+            height: 100%;
             color: var(--accent);
+            overflow: hidden;
+            border-right: 2px solid var(--accent);
+            animation: typeFill 3s infinite alternate;
+        }
+
+        @keyframes typeFill {
+            0% { width: 0; }
+            100% { width: 100%; }
         }
 
         .hero-subtitle {
-            font-size: 24px;
-            color: var(--text-light);
+            font-size: 20px;
+            color: var(--text-muted);
             margin-bottom: 30px;
-            font-weight: 400;
-            animation: fadeInUp 1s ease;
-        }
-
-        .hero-description {
-            font-size: 17px;
-            color: rgba(255, 255, 255, 0.7);
-            margin-bottom: 40px;
-            line-height: 1.8;
-            animation: fadeInUp 1.2s ease;
-        }
-
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .hero-buttons {
-            display: flex;
-            gap: 20px;
-            animation: fadeInUp 1.4s ease;
         }
 
         .btn-primary {
-            padding: 16px 36px;
+            padding: 14px 32px;
             background: var(--accent);
             color: white;
             text-decoration: none;
-            border-radius: 8px;
+            border-radius: 50px;
             font-weight: 600;
-            font-size: 16px;
-            transition: all 0.3s;
             display: inline-block;
-            box-shadow: 0 10px 30px rgba(14, 165, 233, 0.3);
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
+            transition: 0.3s;
         }
 
         .btn-primary:hover {
-            background: var(--accent-dark);
-            transform: translateY(-2px);
-            box-shadow: 0 15px 40px rgba(14, 165, 233, 0.4);
+            transform: translateY(-3px);
+            box-shadow: 0 0 30px rgba(59, 130, 246, 0.6);
         }
 
-        .btn-secondary {
-            padding: 16px 36px;
-            background: transparent;
-            color: white;
-            text-decoration: none;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 16px;
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            transition: all 0.3s;
-            display: inline-block;
-        }
-
-        .btn-secondary:hover {
-            border-color: var(--accent);
-            background: rgba(14, 165, 233, 0.1);
-        }
-
-        .hero-image {
+        .hero-visual {
             position: relative;
-            animation: float 3s ease-in-out infinite;
+            height: 400px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-20px); }
-        }
-
-        .hero-image-bg {
-            width: 450px;
-            height: 450px;
-            background: linear-gradient(135deg, var(--accent) 0%, #0284c7 100%);
-            border-radius: 30px;
+        .hero-card {
+            width: 300px;
+            height: 380px;
+            background: linear-gradient(145deg, var(--bg-card), var(--bg-secondary));
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
             position: relative;
-            overflow: hidden;
-            box-shadow: 0 30px 60px rgba(14, 165, 233, 0.3);
-        }
-
-        .hero-image-bg::before {
-            content: '🎨';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 180px;
-            opacity: 0.3;
-        }
-
-        /* Container */
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 40px;
-        }
-
-        /* Section Styles */
-        section {
-            padding: 120px 0;
-        }
-
-        .section-header {
-            text-align: center;
-            margin-bottom: 70px;
-        }
-
-        .section-label {
-            display: inline-block;
-            padding: 8px 20px;
-            background: rgba(14, 165, 233, 0.1);
-            color: var(--accent);
-            border-radius: 50px;
-            font-size: 14px;
-            font-weight: 600;
-            letter-spacing: 1px;
-            margin-bottom: 20px;
-            text-transform: uppercase;
-        }
-
-        .section-title {
-            font-size: 48px;
-            font-weight: 700;
-            color: var(--primary);
-            margin-bottom: 20px;
-        }
-
-        .section-description {
-            font-size: 18px;
-            color: var(--text-light);
-            max-width: 700px;
-            margin: 0 auto;
-            line-height: 1.8;
-        }
-
-        /* Skills Section */
-        .skills-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 30px;
-        }
-
-        .skill-card {
-            background: white;
-            padding: 40px;
-            border-radius: 16px;
-            border: 1px solid #e2e8f0;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .skill-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: linear-gradient(90deg, var(--accent), #0284c7);
-            transform: translateX(-100%); /* RTL needs check */
-            transition: transform 0.4s;
-        }
-        
-        html[dir="rtl"] .skill-card::before { transform: translateX(100%); }
-        html[dir="ltr"] .skill-card::before { transform: translateX(-100%); }
-
-        .skill-card:hover::before {
-            transform: translateX(0);
-        }
-
-        .skill-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
-            border-color: var(--accent);
-        }
-
-        .skill-icon {
-            width: 70px;
-            height: 70px;
-            background: linear-gradient(135deg, rgba(14, 165, 233, 0.1), rgba(2, 132, 199, 0.05));
-            border-radius: 14px;
+            transform: rotate(-5deg);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 36px;
-            margin-bottom: 25px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            animation: float 4s ease-in-out infinite;
         }
 
-        .skill-card h3 {
-            font-size: 22px;
-            font-weight: 600;
-            color: var(--primary);
-            margin-bottom: 12px;
-        }
-
-        .skill-card p {
-            font-size: 15px;
-            color: var(--text-light);
-            margin-bottom: 20px;
-        }
-
-        .skill-level {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--text-dark);
-        }
-
-        .skill-bar {
-            width: 100%;
-            height: 8px;
-            background: #e2e8f0;
-            border-radius: 10px;
-            overflow: hidden;
-        }
-
-        .skill-progress {
-            height: 100%;
-            background: linear-gradient(90deg, var(--accent), #0284c7);
-            border-radius: 10px;
-            animation: fillBar 2s ease forwards;
-            box-shadow: 0 0 10px rgba(14, 165, 233, 0.3);
-        }
-
-        @keyframes fillBar {
-            from { width: 0; }
-        }
-
-        /* Portfolio */
-        .portfolio-tabs {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-bottom: 50px;
-            flex-wrap: wrap;
-        }
-
-        .tab {
-            padding: 12px 28px;
-            background: white;
-            color: var(--text-dark);
-            border: 2px solid #e2e8f0;
-            border-radius: 50px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 15px;
-            transition: all 0.3s;
-        }
-
-        .tab:hover, .tab.active {
-            background: var(--accent);
-            color: white;
-            border-color: var(--accent);
-        }
-
-        .portfolio-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
-            gap: 35px;
-        }
-
-        .portfolio-item {
-            background: white;
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            cursor: pointer;
-            border: 1px solid #e2e8f0;
-        }
-
-        .portfolio-item:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
-        }
-
-        .portfolio-image {
-            width: 100%;
-            height: 300px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 50px;
-        }
-
-        .portfolio-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.5s;
-        }
-
-        .portfolio-item:hover .portfolio-image img {
-            transform: scale(1.1);
-        }
-
-        .portfolio-image::after {
+        .hero-card::after {
             content: '';
             position: absolute;
             inset: 0;
-            background: linear-gradient(to top, rgba(15, 23, 42, 0.8), transparent);
+            border-radius: 20px;
+            background: linear-gradient(45deg, transparent, rgba(59, 130, 246, 0.1), transparent);
         }
 
-        .portfolio-info {
-            padding: 30px;
+        @keyframes float {
+            0%, 100% { transform: rotate(-5deg) translateY(0); }
+            50% { transform: rotate(-5deg) translateY(-15px); }
         }
 
-        .portfolio-category {
-            display: inline-block;
-            padding: 6px 14px;
-            background: rgba(14, 165, 233, 0.1);
-            color: var(--accent);
-            border-radius: 6px;
-            font-size: 13px;
-            font-weight: 600;
-            margin-bottom: 15px;
+        /* CLIENTS SLIDER (NEW) */
+        .clients-section {
+            padding: 40px 0;
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+            overflow: hidden;
+        }
+        
+        .clients-title {
+            text-align: center;
+            margin-bottom: 25px;
+            color: var(--text-muted);
+            font-size: 14px;
+            letter-spacing: 1px;
         }
 
-        .portfolio-info h3 {
-            font-size: 22px;
-            font-weight: 600;
-            color: var(--primary);
-            margin-bottom: 10px;
-        }
-
-        .portfolio-info p {
-            font-size: 15px;
-            color: var(--text-light);
-            line-height: 1.6;
-        }
-
-        /* Experience Timeline */
-        .timeline {
+        .slider {
+            width: 100%;
+            height: 60px;
             position: relative;
+            overflow: hidden;
+        }
+
+        .slide-track {
+            display: flex;
+            width: calc(200px * 10); /* Adjust based on number of slides */
+            animation: scroll 20s linear infinite;
+        }
+        
+        /* Make animation seamless */
+        @keyframes scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(calc(-200px * 5)); } /* Half of total width */
+        }
+        
+        /* RTL support for slider direction */
+        html[dir="rtl"] .slide-track {
+            animation: scrollRTL 20s linear infinite;
+        }
+        
+        @keyframes scrollRTL {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(calc(200px * 5)); }
+        }
+
+        .slide {
+            width: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 20px;
+            opacity: 0.5;
+            transition: 0.3s;
+        }
+        
+        .slide:hover { opacity: 1; }
+
+        .client-logo-placeholder {
+            font-weight: 700;
+            font-size: 20px;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Common Section Styles */
+        section { padding: 80px 20px; }
+        
+        .section-title {
+            font-size: 32px;
+            color: var(--text-main);
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .section-desc {
+            text-align: center;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto 50px;
+        }
+
+        /* Skills Grid */
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
             max-width: 1000px;
             margin: 0 auto;
         }
 
-        .timeline::before {
-            content: '';
-            position: absolute;
-            right: 50%; /* RTL Default */
-            left: auto;
-            width: 3px;
-            height: 100%;
-            background: linear-gradient(180deg, var(--accent), #0284c7);
-            border-radius: 10px;
-            transform: translateX(50%);
+        .skill-item {
+            background: var(--bg-card);
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+            transition: 0.3s;
         }
 
-        html[dir="ltr"] .timeline::before {
-            right: auto; left: 50%;
-            transform: translateX(-50%);
-        }
-
-        .timeline-item {
-            margin-bottom: 60px;
-            position: relative;
-            width: 45%;
-        }
-
-        /* RTL Logic */
-        html[dir="rtl"] .timeline-item:nth-child(odd) {
-            margin-left: auto; margin-right: 0;
-            padding-right: 60px; padding-left: 0;
-        }
-        html[dir="rtl"] .timeline-item:nth-child(even) {
-            margin-right: auto; margin-left: 0;
-            padding-left: 60px; padding-right: 0;
-        }
-        
-        /* LTR Logic */
-        html[dir="ltr"] .timeline-item:nth-child(odd) {
-            margin-right: auto; margin-left: 0;
-            padding-left: 60px; padding-right: 0;
-        }
-        html[dir="ltr"] .timeline-item:nth-child(even) {
-            margin-left: auto; margin-right: 0;
-            padding-right: 60px; padding-left: 0;
-        }
-
-        .timeline-dot {
-            position: absolute;
-            width: 24px;
-            height: 24px;
-            background: var(--accent);
-            border: 6px solid white;
-            border-radius: 50%;
-            top: 0;
-            box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.2);
-            animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
-        }
-
-        /* Dot positioning RTL */
-        html[dir="rtl"] .timeline-item:nth-child(odd) .timeline-dot { right: -13px; }
-        html[dir="rtl"] .timeline-item:nth-child(even) .timeline-dot { left: -13px; }
-        
-        /* Dot positioning LTR */
-        html[dir="ltr"] .timeline-item:nth-child(odd) .timeline-dot { right: -13px; }
-        html[dir="ltr"] .timeline-item:nth-child(even) .timeline-dot { left: -13px; }
-
-        @keyframes ping {
-            75%, 100% {
-                transform: scale(1.2);
-                opacity: 0;
-            }
-        }
-
-        .timeline-content {
-            background: white;
-            padding: 35px;
-            border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            border: 1px solid #e2e8f0;
-            transition: all 0.3s;
-        }
-
-        .timeline-content:hover {
-            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.12);
+        .skill-item:hover {
+            border-color: var(--accent);
             transform: translateY(-5px);
         }
 
-        .timeline-date {
-            display: inline-block;
-            padding: 6px 14px;
-            background: rgba(14, 165, 233, 0.1);
-            color: var(--accent);
-            border-radius: 6px;
-            font-size: 13px;
-            font-weight: 600;
-            margin-bottom: 15px;
-        }
-
-        .timeline-content h3 {
-            font-size: 24px;
-            font-weight: 600;
-            color: var(--primary);
-            margin-bottom: 8px;
-        }
-
-        .timeline-content h4 {
-            font-size: 16px;
-            font-weight: 500;
-            color: var(--text-light);
-            margin-bottom: 15px;
-        }
-
-        .timeline-content p {
-            font-size: 15px;
-            color: var(--text-light);
-            line-height: 1.7;
-        }
-
-        /* Contact Section */
-        .contact-section {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            padding: 120px 40px;
-        }
-
-        .contact-container {
+        /* Portfolio */
+        .portfolio-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
             max-width: 1200px;
             margin: 0 auto;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 80px;
-            align-items: center;
         }
 
-        .contact-info h2 {
-            font-size: 48px;
-            font-weight: 700;
-            color: white;
-            margin-bottom: 25px;
+        .project-card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
         }
 
-        .contact-info p {
-            font-size: 18px;
-            color: rgba(255, 255, 255, 0.7);
-            margin-bottom: 40px;
-            line-height: 1.8;
-        }
-
-        .contact-details {
-            display: flex;
-            flex-direction: column;
-            gap: 25px;
-        }
-
-        .contact-item {
+        .project-img {
+            height: 200px;
+            background: linear-gradient(135deg, #1e3a8a, #172554);
             display: flex;
             align-items: center;
-            gap: 20px;
+            justify-content: center;
+            font-size: 40px;
+        }
+
+        .project-info {
             padding: 20px;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            transition: all 0.3s;
         }
 
-        .contact-item:hover {
-            background: rgba(255, 255, 255, 0.15);
-            transform: translateX(-5px); /* RTL */
-        }
-        
-        html[dir="ltr"] .contact-item:hover {
-             transform: translateX(5px);
-        }
-
-        .contact-icon {
-            width: 50px;
-            height: 50px;
-            background: var(--accent);
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            flex-shrink: 0;
-        }
-
-        .contact-item-text h4 {
-            font-size: 16px;
-            font-weight: 600;
-            color: white;
-            margin-bottom: 5px;
-        }
-
-        .contact-item-text p {
-            font-size: 15px;
-            color: rgba(255, 255, 255, 0.7);
-            margin: 0;
-        }
-
-        .social-links {
-            display: flex;
-            gap: 15px;
-            margin-top: 30px;
-        }
-
-        .social-link {
-            width: 50px;
-            height: 50px;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            text-decoration: none;
-            font-size: 20px;
-            transition: all 0.3s;
-        }
-
-        .social-link:hover {
-            background: var(--accent);
-            border-color: var(--accent);
-            transform: translateY(-3px);
-        }
+        .project-info h3 { font-size: 18px; margin-bottom: 5px; color: white; }
+        .project-info p { color: var(--text-muted); font-size: 14px; }
 
         /* Footer */
         footer {
-            background: var(--primary);
-            padding: 40px 0;
             text-align: center;
-            color: rgba(255, 255, 255, 0.6);
+            padding: 30px;
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-color);
+            color: var(--text-muted);
+            font-size: 14px;
         }
 
-        footer p {
-            font-size: 15px;
-        }
-
-        /* Responsive */
-        @media (max-width: 1024px) {
-            .hero-container, .contact-container {
-                grid-template-columns: 1fr;
-                gap: 50px;
-            }
-
-            .hero-image-bg {
-                width: 100%;
-                max-width: 400px;
-                margin: 0 auto;
-            }
-
-            .timeline::before {
-                right: 20px;
-            }
-            html[dir="ltr"] .timeline::before {
-                right: auto; left: 20px;
-            }
-
-            .timeline-item {
-                width: 100%;
-            }
-            
-            /* Reset padding for RTL responsive */
-            html[dir="rtl"] .timeline-item {
-                padding-right: 60px !important;
-                padding-left: 0 !important;
-                margin-left: 0 !important;
-            }
-            html[dir="rtl"] .timeline-item .timeline-dot {
-                right: -13px !important; left: auto !important;
-            }
-
-            /* Reset padding for LTR responsive */
-            html[dir="ltr"] .timeline-item {
-                padding-left: 60px !important;
-                padding-right: 0 !important;
-                margin-right: 0 !important;
-            }
-            html[dir="ltr"] .timeline-item .timeline-dot {
-                left: -13px !important; right: auto !important;
-            }
-        }
-
+        /* Mobile Optimization */
         @media (max-width: 768px) {
             .nav-container {
-                flex-direction: column;
-                gap: 20px;
+                padding: 0 15px;
+            }
+            
+            nav ul {
+                display: none; /* Can be replaced with hamburger for full menu, but simplified for clean mobile look */
             }
 
+            /* Add a simple mobile menu style if needed, or just keep logo for simplicity in this snippet */
+            /* For this request, let's stack them or scroll them */
             nav ul {
-                flex-wrap: wrap;
-                justify-content: center;
-                gap: 20px;
+                display: flex;
+                gap: 15px;
+                overflow-x: auto;
+                padding-bottom: 5px;
+                -webkit-overflow-scrolling: touch;
+                width: 100%;
+                justify-content: flex-start;
+            }
+            
+            .nav-container {
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
             }
 
             .hero {
-                padding: 140px 20px 80px;
+                padding-top: 120px;
+                text-align: center;
             }
 
+            .hero-container {
+                grid-template-columns: 1fr;
+            }
+            
             .hero-content h1 {
-                font-size: 40px;
-            }
-
-            .hero-subtitle {
-                font-size: 20px;
-            }
-
-            .section-title {
                 font-size: 36px;
             }
 
-            .portfolio-grid {
-                grid-template-columns: 1fr;
+            .hero-visual {
+                height: 300px;
+                margin-top: 30px;
             }
-
-            .hero-buttons {
-                flex-direction: column;
+            
+            .clients-slider {
+                margin-top: 30px;
             }
-
-            .btn-primary, .btn-secondary {
-                width: 100%;
-                text-align: center;
-            }
-        }
-
-        .fade-in {
-            animation: fadeIn 1s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
         }
     </style>
 </head>
 <body>
+
     <nav>
         <div class="nav-container">
-            <div class="logo"><span data-i18n="nameFirst">زياد</span> <span style="color:white" data-i18n="nameLast">أبولائطة</span></div>
+            <div class="logo"><span data-i18n="nameFirst">زياد</span> <span data-i18n="nameLast">أبولائطة</span></div>
             <ul>
                 <li><a href="#home" data-i18n="navHome">الرئيسية</a></li>
-                <li><a href="#skills" data-i18n="navSkills">المهارات</a></li>
+                <li><a href="#services" data-i18n="navSkills">الخدمات</a></li>
                 <li><a href="#portfolio" data-i18n="navPortfolio">الأعمال</a></li>
-                <li><a href="#experience" data-i18n="navExp">الخبرات</a></li>
                 <li><a href="#contact" data-i18n="navContact">تواصل معي</a></li>
-                <li><button class="lang-btn" onclick="toggleLanguage()">🌍 <span id="langLabel">English</span></button></li>
             </ul>
         </div>
     </nav>
 
     <section class="hero" id="home">
+        <div class="hero-bg-glow"></div>
         <div class="hero-container">
             <div class="hero-content">
-                <h1 data-i18n="heroTitle">مصمم جرافيك <span data-i18n="heroHighlight">محترف</span></h1>
-                <p class="hero-subtitle" data-i18n="heroSubtitle">إبداع بصري يحول الأفكار إلى واقع</p>
-                <p class="hero-description" data-i18n="heroDesc">
-                    متخصص في تصميم الهويات البصرية والتصاميم الإبداعية التي تترك انطباعاً دائماً. أعمل على تحويل رؤيتك إلى تصاميم استثنائية تعكس قيم علامتك التجارية بشكل احترافي ومميز.
-                </p>
-                <div class="hero-buttons">
-                    <a href="#portfolio" class="btn-primary" data-i18n="btnPortfolio">شاهد أعمالي</a>
-                    <a href="#contact" class="btn-secondary" data-i18n="btnContact">تواصل معي</a>
-                </div>
+                <h1 data-i18n="heroTitle">مصمم جرافيك <br><span data-text="Creative" data-i18n="heroHighlight">مبدع</span></h1>
+                <p class="hero-subtitle" data-i18n="heroDesc">أحول أفكارك إلى تصاميم بصرية مذهلة تخدم أهدافك التجارية.</p>
+                <a href="#contact" class="btn-primary" data-i18n="btnContact">ابدأ مشروعك</a>
             </div>
-            <div class="hero-image">
-                <div class="hero-image-bg"></div>
-            </div>
-        </div>
-    </section>
-
-    <section id="skills">
-        <div class="container">
-            <div class="section-header">
-                <span class="section-label" data-i18n="skillsLabel">المهارات التقنية</span>
-                <h2 class="section-title" data-i18n="skillsTitle">الأدوات والتقنيات</h2>
-                <p class="section-description" data-i18n="skillsDesc">
-                    أمتلك خبرة واسعة في أحدث أدوات التصميم والبرامج الاحترافية لتقديم أفضل النتائج
-                </p>
-            </div>
-            <div class="skills-grid">
-                <div class="skill-card">
-                    <div class="skill-icon">🎨</div>
-                    <h3>Adobe Photoshop</h3>
-                    <p data-i18n="skillPs">تصميم وتحرير الصور الاحترافية</p>
-                    <div class="skill-level">
-                        <span data-i18n="mastery">الإتقان</span>
-                        <span>95%</span>
-                    </div>
-                    <div class="skill-bar">
-                        <div class="skill-progress" style="width: 95%"></div>
-                    </div>
-                </div>
-                <div class="skill-card">
-                    <div class="skill-icon">✏️</div>
-                    <h3>Adobe Illustrator</h3>
-                    <p data-i18n="skillAi">تصميم الشعارات والرسوم المتجهة</p>
-                    <div class="skill-level">
-                        <span data-i18n="mastery">الإتقان</span>
-                        <span>92%</span>
-                    </div>
-                    <div class="skill-bar">
-                        <div class="skill-progress" style="width: 92%"></div>
-                    </div>
-                </div>
-                <div class="skill-card">
-                    <div class="skill-icon">🎯</div>
-                    <h3 data-i18n="skillBrandingTitle">Brand Identity</h3>
-                    <p data-i18n="skillBranding">تطوير الهويات البصرية المتكاملة</p>
-                    <div class="skill-level">
-                        <span data-i18n="mastery">الإتقان</span>
-                        <span>93%</span>
-                    </div>
-                    <div class="skill-bar">
-                        <div class="skill-progress" style="width: 93%"></div>
-                    </div>
+            <div class="hero-visual">
+                <div class="hero-card">
+                    <div style="font-size: 80px;">🎨</div>
                 </div>
             </div>
         </div>
     </section>
 
-    <section id="portfolio" style="background: white;">
-        <div class="container">
-            <div class="section-header">
-                <span class="section-label" data-i18n="portLabel">معرض الأعمال</span>
-                <h2 class="section-title" data-i18n="portTitle">مشاريع مميزة</h2>
-                <p class="section-description" data-i18n="portDesc">
-                    مجموعة مختارة من أفضل المشاريع التي قمت بتصميمها للعملاء
-                </p>
+    <div class="clients-section">
+        <p class="clients-title" data-i18n="clientsLabel">أبرز العملاء</p>
+        <div class="slider">
+            <div class="slide-track">
+                <div class="slide"><div class="client-logo-placeholder">⚡ TECH CO</div></div>
+                <div class="slide"><div class="client-logo-placeholder">🏥 MED CARE</div></div>
+                <div class="slide"><div class="client-logo-placeholder">☕ COFFEE</div></div>
+                <div class="slide"><div class="client-logo-placeholder">🏠 REAL ESTATE</div></div>
+                <div class="slide"><div class="client-logo-placeholder">💇‍♂️ BARBER</div></div>
+                
+                <div class="slide"><div class="client-logo-placeholder">⚡ TECH CO</div></div>
+                <div class="slide"><div class="client-logo-placeholder">🏥 MED CARE</div></div>
+                <div class="slide"><div class="client-logo-placeholder">☕ COFFEE</div></div>
+                <div class="slide"><div class="client-logo-placeholder">🏠 REAL ESTATE</div></div>
+                <div class="slide"><div class="client-logo-placeholder">💇‍♂️ BARBER</div></div>
             </div>
-            <div class="portfolio-tabs">
-                <div class="tab active" data-i18n="tabAll">الكل</div>
-                <div class="tab" data-i18n="tabId">الهوية البصرية</div>
-                <div class="tab" data-i18n="tabWeb">تصميم مواقع</div>
-            </div>
-            <div class="portfolio-grid">
-                <div class="portfolio-item">
-                    <div class="portfolio-image">🎨</div>
-                    <div class="portfolio-info">
-                        <span class="portfolio-category" data-i18n="catId">هوية بصرية</span>
-                        <h3 data-i18n="proj1Title">تصميم شعار شركة تقنية</h3>
-                        <p data-i18n="proj1Desc">تطوير هوية بصرية كاملة لشركة ناشئة في مجال التكنولوجيا</p>
-                    </div>
+        </div>
+    </div>
+
+    <section id="portfolio">
+        <h2 class="section-title" data-i18n="portTitle">أعمال مختارة</h2>
+        <p class="section-desc" data-i18n="portDesc">نظرة على بعض المشاريع التي قمت بتنفيذها مؤخراً</p>
+        
+        <div class="portfolio-grid">
+            <div class="project-card">
+                <div class="project-img">💊</div>
+                <div class="project-info">
+                    <h3>RAZOLIX® Marketing</h3>
+                    <p>Pharma Design</p>
                 </div>
-                <div class="portfolio-item">
-                    <div class="portfolio-image">💻</div>
-                    <div class="portfolio-info">
-                        <span class="portfolio-category" data-i18n="catWeb">تصميم مواقع</span>
-                        <h3 data-i18n="proj2Title">واجهة متجر إلكتروني</h3>
-                        <p data-i18n="proj2Desc">تصميم تجربة مستخدم عصرية لمتجر ملابس</p>
-                    </div>
+            </div>
+            <div class="project-card">
+                <div class="project-img">🏙️</div>
+                <div class="project-info">
+                    <h3>Al Saraya Furniture</h3>
+                    <p>Brand Identity</p>
+                </div>
+            </div>
+            <div class="project-card">
+                <div class="project-img">✂️</div>
+                <div class="project-info">
+                    <h3>Barbershop Branding</h3>
+                    <p>Logo & Identity</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <section id="experience">
-        <div class="container">
-            <div class="section-header">
-                <span class="section-label" data-i18n="expLabel">الرحلة المهنية</span>
-                <h2 class="section-title" data-i18n="expTitle">الخبرات والمؤهلات</h2>
-            </div>
-            <div class="timeline">
-                <div class="timeline-item">
-                    <div class="timeline-dot"></div>
-                    <div class="timeline-content">
-                        <span class="timeline-date">2023 - Present</span>
-                        <h3 data-i18n="job1Title">Senior Graphic Designer</h3>
-                        <h4 data-i18n="job1Comp">Freelance / مستقل</h4>
-                        <p data-i18n="job1Desc">العمل مع عملاء محليين ودوليين في تصميم الهويات البصرية وحملات السوشيال ميديا.</p>
-                    </div>
-                </div>
-                <div class="timeline-item">
-                    <div class="timeline-dot"></div>
-                    <div class="timeline-content">
-                        <span class="timeline-date">2021 - 2023</span>
-                        <h3 data-i18n="job2Title">UI/UX Designer</h3>
-                        <h4 data-i18n="job2Comp">Creative Agency</h4>
-                        <p data-i18n="job2Desc">تصميم واجهات تطبيقات ومواقع ويب مع التركيز على تجربة المستخدم.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="contact" class="contact-section">
-        <div class="contact-container">
-            <div class="contact-info">
-                <h2 data-i18n="contactTitle">لنبدأ العمل معاً</h2>
-                <p data-i18n="contactDesc">هل لديك مشروع في ذهنك؟ تواصل معي اليوم لمناقشة كيف يمكنني مساعدتك في تحقيق أهدافك.</p>
-                <div class="contact-details">
-                    <div class="contact-item">
-                        <div class="contact-icon">📧</div>
-                        <div class="contact-item-text">
-                            <h4 data-i18n="emailLabel">البريد الإلكتروني</h4>
-                            <p>contact@ziadabolayta.com</p>
-                        </div>
-                    </div>
-                    <div class="contact-item">
-                        <div class="contact-icon">📱</div>
-                        <div class="contact-item-text">
-                            <h4 data-i18n="phoneLabel">رقم الهاتف</h4>
-                            <p>+218 9X XXXXXXX</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="social-links">
-                    <a href="#" class="social-link">in</a>
-                    <a href="#" class="social-link">Be</a>
-                    <a href="#" class="social-link">Ig</a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <footer>
-        <div class="container">
-            <p data-i18n="copyright">© 2024 زياد أبولائطة. جميع الحقوق محفوظة.</p>
-        </div>
+    <footer id="contact">
+        <p>© 2025 Ziad Abolayta. Designed with 💙</p>
     </footer>
 
     <script>
         const translations = {
             ar: {
-                pageTitle: "زياد أبولائطة - مصمم جرافيك محترف",
+                pageTitle: "زياد أبولائطة - مصمم جرافيك",
                 nameFirst: "زياد",
                 nameLast: "أبولائطة",
                 navHome: "الرئيسية",
-                navSkills: "المهارات",
+                navSkills: "الخدمات",
                 navPortfolio: "الأعمال",
-                navExp: "الخبرات",
                 navContact: "تواصل معي",
                 heroTitle: "مصمم جرافيك",
-                heroHighlight: "محترف",
-                heroSubtitle: "إبداع بصري يحول الأفكار إلى واقع",
-                heroDesc: "متخصص في تصميم الهويات البصرية والتصاميم الإبداعية التي تترك انطباعاً دائماً. أعمل على تحويل رؤيتك إلى تصاميم استثنائية تعكس قيم علامتك التجارية بشكل احترافي ومميز.",
-                btnPortfolio: "شاهد أعمالي",
+                heroHighlight: "مبدع",
+                heroDesc: "متخصص في الهوية البصرية، تصميمات السوشيال ميديا، والمطبوعات الإعلانية.",
                 btnContact: "تواصل معي",
-                skillsLabel: "المهارات التقنية",
-                skillsTitle: "الأدوات والتقنيات",
-                skillsDesc: "أمتلك خبرة واسعة في أحدث أدوات التصميم والبرامج الاحترافية لتقديم أفضل النتائج",
-                skillPs: "تصميم وتحرير الصور الاحترافية",
-                skillAi: "تصميم الشعارات والرسوم المتجهة",
-                skillBrandingTitle: "الهوية البصرية",
-                skillBranding: "تطوير الهويات البصرية المتكاملة",
-                mastery: "الإتقان",
-                portLabel: "معرض الأعمال",
-                portTitle: "مشاريع مميزة",
-                portDesc: "مجموعة مختارة من أفضل المشاريع التي قمت بتصميمها للعملاء",
-                tabAll: "الكل",
-                tabId: "الهوية البصرية",
-                tabWeb: "تصميم مواقع",
-                catId: "هوية بصرية",
-                catWeb: "تصميم مواقع",
-                proj1Title: "تصميم شعار شركة تقنية",
-                proj1Desc: "تطوير هوية بصرية كاملة لشركة ناشئة في مجال التكنولوجيا",
-                proj2Title: "واجهة متجر إلكتروني",
-                proj2Desc: "تصميم تجربة مستخدم عصرية لمتجر ملابس",
-                expLabel: "الرحلة المهنية",
-                expTitle: "الخبرات والمؤهلات",
-                job1Title: "مصمم جرافيك أول",
-                job1Comp: "مستقل / Freelance",
-                job1Desc: "العمل مع عملاء محليين ودوليين في تصميم الهويات البصرية وحملات السوشيال ميديا.",
-                job2Title: "مصمم واجهات UI/UX",
-                job2Comp: "وكالة إبداعية",
-                job2Desc: "تصميم واجهات تطبيقات ومواقع ويب مع التركيز على تجربة المستخدم.",
-                contactTitle: "لنبدأ العمل معاً",
-                contactDesc: "هل لديك مشروع في ذهنك؟ تواصل معي اليوم لمناقشة كيف يمكنني مساعدتك في تحقيق أهدافك.",
-                emailLabel: "البريد الإلكتروني",
-                phoneLabel: "رقم الهاتف",
-                copyright: "© 2024 زياد أبولائطة. جميع الحقوق محفوظة."
+                clientsLabel: "أبرز شركاء النجاح",
+                portTitle: "أعمال مختارة",
+                portDesc: "بعض المشاريع التي عملت عليها مؤخراً"
             },
             en: {
-                pageTitle: "Ziad Abolayta - Professional Graphic Designer",
+                pageTitle: "Ziad Abolayta - Graphic Designer",
                 nameFirst: "Ziad",
                 nameLast: "Abolayta",
                 navHome: "Home",
-                navSkills: "Skills",
+                navSkills: "Services",
                 navPortfolio: "Portfolio",
-                navExp: "Experience",
                 navContact: "Contact",
                 heroTitle: "Professional",
-                heroHighlight: "Graphic Designer",
-                heroSubtitle: "Visual creativity turning ideas into reality",
-                heroDesc: "Specialized in visual identity design and creative concepts that leave a lasting impression. I work on transforming your vision into exceptional designs that reflect your brand values professionally.",
-                btnPortfolio: "View Portfolio",
+                heroHighlight: "Designer",
+                heroDesc: "Specialized in visual identity, social media designs, and advertising materials.",
                 btnContact: "Contact Me",
-                skillsLabel: "Technical Skills",
-                skillsTitle: "Tools & Technologies",
-                skillsDesc: "Extensive experience with the latest design tools and professional software to deliver the best results",
-                skillPs: "Professional Photo Editing & Manipulation",
-                skillAi: "Logo Design & Vector Graphics",
-                skillBrandingTitle: "Brand Identity",
-                skillBranding: "Developing complete visual identities",
-                mastery: "Mastery",
-                portLabel: "Portfolio",
-                portTitle: "Featured Projects",
-                portDesc: "A selected collection of the best projects I've designed for clients",
-                tabAll: "All",
-                tabId: "Branding",
-                tabWeb: "Web Design",
-                catId: "Branding",
-                catWeb: "Web Design",
-                proj1Title: "Tech Company Logo",
-                proj1Desc: "Developing a complete visual identity for a technology startup",
-                proj2Title: "E-Commerce UI",
-                proj2Desc: "Designing a modern user experience for a clothing store",
-                expLabel: "Career Journey",
-                expTitle: "Experience & Qualifications",
-                job1Title: "Senior Graphic Designer",
-                job1Comp: "Freelance",
-                job1Desc: "Working with local and international clients on visual identities and social media campaigns.",
-                job2Title: "UI/UX Designer",
-                job2Comp: "Creative Agency",
-                job2Desc: "Designing application interfaces and websites with a focus on user experience.",
-                contactTitle: "Let's Work Together",
-                contactDesc: "Have a project in mind? Contact me today to discuss how I can help you achieve your goals.",
-                emailLabel: "Email",
-                phoneLabel: "Phone",
-                copyright: "© 2024 Ziad Abolayta. All rights reserved."
+                clientsLabel: "TRUSTED BY",
+                portTitle: "Selected Works",
+                portDesc: "Some of the projects I worked on recently"
             }
         };
 
-        let currentLang = 'ar';
-
-        function setLanguage(lang) {
-            currentLang = lang;
-            const elements = document.querySelectorAll('[data-i18n]');
+        // Auto-detect only (No Button)
+        window.addEventListener('DOMContentLoaded', () => {
+            const userLang = navigator.language || navigator.userLanguage;
+            const lang = userLang.startsWith('en') ? 'en' : 'ar';
             
-            // Set Direction
-            document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+            // Set Page Direction
             document.documentElement.lang = lang;
-            
+            document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+
             // Update Text
-            elements.forEach(element => {
-                const key = element.getAttribute('data-i18n');
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
                 if (translations[lang][key]) {
-                    // Check if element has nested spans we want to keep structure of
-                    if(element.children.length > 0 && key !== 'heroTitle') {
-                         // Simple text replacement might break structure for complex elements
-                         // For this template, most are simple text.
-                         // Special handling for heroTitle if needed, but handled by logic below
-                    } 
-                    
-                    // Special case for Hero Title to keep the span structure
-                    if (key === 'heroTitle') {
-                        if (lang === 'en') {
-                             element.innerHTML = `${translations[lang].heroTitle} <span style="color:var(--accent)">${translations[lang].heroHighlight}</span>`;
+                    if(key === 'heroTitle') {
+                        // Keep the HTML structure for the span
+                        if(lang === 'en') {
+                             el.innerHTML = `Graphic <br><span data-text="Designer">Designer</span>`;
                         } else {
-                             element.innerHTML = `${translations[lang].heroTitle} <span style="color:var(--accent)">${translations[lang].heroHighlight}</span>`;
+                             el.innerHTML = `مصمم جرافيك <br><span data-text="مبدع">مبدع</span>`;
                         }
                     } else {
-                        element.textContent = translations[lang][key];
+                        el.textContent = translations[lang][key];
                     }
                 }
             });
-
-            // Update Toggle Button Label
-            document.getElementById('langLabel').textContent = lang === 'ar' ? 'English' : 'العربية';
-        }
-
-        function toggleLanguage() {
-            setLanguage(currentLang === 'ar' ? 'en' : 'ar');
-        }
-
-        // Auto-detect language on load
-        window.addEventListener('DOMContentLoaded', () => {
-            const userLang = navigator.language || navigator.userLanguage;
-            if (userLang.startsWith('en')) {
-                setLanguage('en');
-            } else {
-                setLanguage('ar');
-            }
         });
     </script>
 </body>
