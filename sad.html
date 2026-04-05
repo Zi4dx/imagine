@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حملني Pro | Web Edition</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: IBM Plex Sans Arabic -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;600;700&display=swap');
+        
+        body {
+            font-family: 'IBM Plex Sans Arabic', sans-serif;
+            background-color: #1a1a1a;
+            color: #ffffff;
+        }
+        
+        .bg-panel { background-color: #2b2b2b; }
+        .bg-input { background-color: #3a3a3a; }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #1a1a1a; }
+        ::-webkit-scrollbar-thumb { background: #4a4a4a; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #555; }
+
+        .tab-btn.active {
+            border-bottom: 2px solid #3b82f6; /* blue-500 */
+            color: #3b82f6;
+        }
+    </style>
+</head>
+<body class="flex h-screen overflow-hidden">
+
+    <!-- Sidebar -->
+    <aside class="w-64 bg-panel flex flex-col justify-between border-l border-gray-700 z-10 shadow-lg">
+        <div>
+            <div class="p-6">
+                <h1 class="text-2xl font-bold text-center text-blue-500 tracking-wide">
+                    <i class="fa-solid fa-cloud-arrow-down ml-2"></i>حملني Pro
+                </h1>
+            </div>
+            
+            <div class="px-4 mt-4 space-y-4">
+                <!-- Toggle Clipboard Monitor -->
+                <div class="flex items-center justify-between bg-input p-3 rounded-lg">
+                    <span class="text-sm font-semibold">مراقب الحافظة</span>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="clipboardToggle" class="sr-only peer" onchange="toggleMonitor()">
+                        <div class="w-11 h-6 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:right-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500"></div>
+                    </label>
+                </div>
+
+                <!-- Open Folder Button -->
+                <button onclick="openFolder()" class="w-full py-2 px-4 border-2 border-gray-600 hover:border-gray-400 rounded-lg text-sm font-bold transition-colors flex items-center justify-center gap-2">
+                    <i class="fa-regular fa-folder-open"></i> فتح المجلد
+                </button>
+            </div>
+        </div>
+
+        <div class="p-4 text-center">
+            <span class="text-xs text-gray-500">v3.8 Web Edition</span>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col h-full overflow-y-auto p-6 space-y-6 relative">
+        
+        <!-- URL Input Area -->
+        <div class="flex items-center gap-3 w-full">
+            <button onclick="pasteClipboard()" class="bg-gray-700 hover:bg-gray-600 px-4 py-3 rounded-lg font-semibold transition-colors flex items-center gap-2 shrink-0">
+                <i class="fa-solid fa-paste"></i> لصق
+            </button>
+            <input type="text" id="urlInput" placeholder="ضع رابط الفيديو هنا... (Ctrl+V)" class="flex-1 bg-input border border-gray-600 rounded-lg px-4 py-3 focus:outline-none focus:border-blue-500 transition-colors text-right" dir="ltr">
+        </div>
+
+        <!-- Tabs Section -->
+        <div class="bg-panel rounded-xl shadow-md border border-gray-700 flex flex-col h-72">
+            <!-- Tab Headers -->
+            <div class="flex border-b border-gray-700">
+                <button onclick="switchTab('video')" id="btn-video" class="tab-btn active flex-1 py-4 font-semibold hover:bg-gray-700 transition-colors">
+                    <i class="fa-solid fa-video ml-2"></i> فيديو
+                </button>
+                <button onclick="switchTab('audio')" id="btn-audio" class="tab-btn flex-1 py-4 font-semibold hover:bg-gray-700 transition-colors text-gray-400">
+                    <i class="fa-solid fa-music ml-2"></i> صوتيات
+                </button>
+                <button onclick="switchTab('settings')" id="btn-settings" class="tab-btn flex-1 py-4 font-semibold hover:bg-gray-700 transition-colors text-gray-400">
+                    <i class="fa-solid fa-gear ml-2"></i> إعدادات
+                </button>
+            </div>
+
+            <!-- Tab Contents -->
+            <div class="p-6 overflow-y-auto flex-1">
+                
+                <!-- Video Tab -->
+                <div id="tab-video" class="space-y-5 block">
+                    <div class="flex items-center gap-4">
+                        <label class="w-20 text-sm font-semibold">الجودة:</label>
+                        <select class="flex-1 bg-input border border-gray-600 rounded-lg px-3 py-2 outline-none focus:border-blue-500 cursor-pointer">
+                            <option>Best (4K/2K)</option>
+                            <option selected>1080p</option>
+                            <option>720p</option>
+                            <option>480p</option>
+                        </select>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <input type="checkbox" id="chkSubtitles" checked class="w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 rounded cursor-pointer">
+                        <label for="chkSubtitles" class="text-sm cursor-pointer">دمج الترجمة (Soft Subs)</label>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <input type="checkbox" id="chkThumbnail" checked class="w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 rounded cursor-pointer">
+                        <label for="chkThumbnail" class="text-sm cursor-pointer">دمج صورة الغلاف</label>
+                    </div>
+                </div>
+
+                <!-- Audio Tab -->
+                <div id="tab-audio" class="space-y-5 hidden">
+                    <div class="flex items-center gap-4">
+                        <label class="w-20 text-sm font-semibold">الصيغة:</label>
+                        <select class="flex-1 bg-input border border-gray-600 rounded-lg px-3 py-2 outline-none focus:border-blue-500 cursor-pointer">
+                            <option selected>mp3</option>
+                            <option>m4a</option>
+                            <option>wav</option>
+                            <option>flac</option>
+                        </select>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <label class="w-20 text-sm font-semibold">الجودة:</label>
+                        <select class="flex-1 bg-input border border-gray-600 rounded-lg px-3 py-2 outline-none focus:border-blue-500 cursor-pointer">
+                            <option>320 kbps</option>
+                            <option selected>192 kbps</option>
+                            <option>128 kbps</option>
+                        </select>
+                    </div>
+                    
+                    <div class="bg-input p-4 rounded-lg space-y-3 mt-4 border border-gray-700">
+                        <div class="flex items-center gap-3">
+                            <input type="checkbox" id="chkEnhance" class="w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 rounded cursor-pointer">
+                            <label for="chkEnhance" class="text-sm cursor-pointer">تحسين الصوت (إزالة الضوضاء وتوحيد الصوت)</label>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <input type="checkbox" id="chkAIMeta" checked class="w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 rounded cursor-pointer">
+                            <label for="chkAIMeta" class="text-sm cursor-pointer text-blue-400 font-semibold">جلب بيانات المغني/الملحن (AI Metadata)</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Settings Tab -->
+                <div id="tab-settings" class="space-y-6 hidden">
+                    <div class="flex items-center gap-3">
+                        <input type="checkbox" id="chkPlaylist" class="w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 rounded cursor-pointer">
+                        <label for="chkPlaylist" class="text-sm font-semibold cursor-pointer">تحميل قائمة تشغيل كاملة (Playlist)</label>
+                    </div>
+                    <div>
+                        <button onclick="changePath()" class="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-lg text-sm font-semibold transition-colors">
+                            تغيير مسار الحفظ
+                        </button>
+                        <p id="lblPath" class="text-xs text-gray-400 mt-2">المسار الحالي: /Downloads</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Download Action -->
+        <div class="w-full">
+            <button id="downloadBtn" onclick="startDownload()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-lg shadow-lg transition-colors flex justify-center items-center gap-2 text-lg">
+                بدء التحميل <i class="fa-solid fa-rocket"></i>
+            </button>
+            
+            <div class="mt-4 bg-gray-700 rounded-full h-2.5 overflow-hidden">
+                <div id="progressBar" class="bg-blue-500 h-2.5 rounded-full transition-all duration-300" style="width: 0%"></div>
+            </div>
+            <p id="progressText" class="text-xs text-gray-400 text-center mt-2">جاهز...</p>
+        </div>
+
+        <!-- Console Area -->
+        <div class="bg-black border border-gray-700 rounded-lg p-3 flex-1 min-h-[150px] flex flex-col font-mono text-xs">
+            <div id="consoleLog" class="overflow-y-auto flex-1 text-green-400 space-y-1 whitespace-pre-wrap">--- سجل العمليات ---
+> تم التحقق من النظام: الواجهة جاهزة.</div>
+        </div>
+
+    </main>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // Tab Switching Logic
+        function switchTab(tabId) {
+            // Hide all tabs
+            document.querySelectorAll('[id^="tab-"]').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('[id^="tab-"]').forEach(el => el.classList.remove('block'));
+            
+            // Show selected tab
+            document.getElementById('tab-' + tabId).classList.remove('hidden');
+            document.getElementById('tab-' + tabId).classList.add('block');
+            
+            // Update button styles
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active', 'text-white');
+                btn.classList.add('text-gray-400');
+            });
+            let activeBtn = document.getElementById('btn-' + tabId);
+            activeBtn.classList.add('active', 'text-white');
+            activeBtn.classList.remove('text-gray-400');
+        }
+
+        // Console Logging
+        function logMsg(message, isError = false) {
+            const consoleEl = document.getElementById('consoleLog');
+            const colorClass = isError ? 'text-red-400' : 'text-green-400';
+            consoleEl.innerHTML += `\n<span class="${colorClass}">> ${message}</span>`;
+            consoleEl.scrollTop = consoleEl.scrollHeight;
+        }
+
+        // Paste from Clipboard
+        async function pasteClipboard() {
+            try {
+                const text = await navigator.clipboard.readText();
+                const urlInput = document.getElementById('urlInput');
+                urlInput.value = text;
+                urlInput.focus();
+                
+                // Visual feedback
+                urlInput.classList.add('border-green-500');
+                setTimeout(() => urlInput.classList.remove('border-green-500'), 500);
+            } catch (err) {
+                logMsg('خطأ: لا توجد صلاحية للوصول إلى الحافظة. يرجى اللصق يدوياً (Ctrl+V)', true);
+            }
+        }
+
+        // Clipboard Monitor Mock
+        let monitorInterval;
+        function toggleMonitor() {
+            const isChecked = document.getElementById('clipboardToggle').checked;
+            if (isChecked) {
+                logMsg('بدء مراقبة الحافظة...');
+                // Note: Real clipboard monitoring in browsers without user interaction is blocked by security policies.
+                // This is just a simulated visual response.
+            } else {
+                logMsg('تم إيقاف المراقبة.');
+                clearInterval(monitorInterval);
+            }
+        }
+
+        // Open Folder Mock
+        function openFolder() {
+            logMsg('في نسخة الويب، يتم حفظ الملفات في مجلد التنزيلات الافتراضي للمتصفح.');
+        }
+
+        // Change Path Mock
+        function changePath() {
+            logMsg('تغيير مسار الحفظ يتم إدارته بواسطة المتصفح (Downloads).');
+        }
+
+        // Simulated Download Process
+        let isDownloading = false;
+        function startDownload() {
+            if (isDownloading) return;
+            
+            const url = document.getElementById('urlInput').value.trim();
+            if (!url) {
+                alert("الرجاء إدخال رابط الفيديو!");
+                return;
+            }
+
+            isDownloading = true;
+            const btn = document.getElementById('downloadBtn');
+            const progress = document.getElementById('progressBar');
+            const pText = document.getElementById('progressText');
+            
+            btn.classList.add('opacity-75', 'cursor-not-allowed');
+            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> جاري العمل...';
+            
+            progress.style.width = '0%';
+            pText.innerText = "جاري الاتصال واستخراج البيانات...";
+            logMsg(`بدء معالجة الرابط: ${url}`);
+
+            // AI Metadata Check Simulation
+            if(!document.getElementById('tab-audio').classList.contains('hidden') && document.getElementById('chkAIMeta').checked) {
+                setTimeout(() => logMsg("جاري تحليل البيانات ذكياً (AI Analysis)..."), 500);
+                setTimeout(() => logMsg("تم استخراج الفنان: Unknown Artist"), 1000);
+            }
+
+            // Simulate Download Steps
+            let progressValue = 0;
+            const interval = setInterval(() => {
+                progressValue += Math.floor(Math.random() * 15) + 5;
+                if (progressValue >= 100) {
+                    progressValue = 100;
+                    clearInterval(interval);
+                    
+                    // Finished
+                    progress.style.width = '100%';
+                    pText.innerText = "اكتمل التنزيل. جاري المعالجة (FFmpeg)...";
+                    logMsg("اكتمل التنزيل. جاري المعالجة (FFmpeg)...");
+                    
+                    setTimeout(() => {
+                        btn.classList.remove('opacity-75', 'cursor-not-allowed');
+                        btn.innerHTML = 'بدء التحميل <i class="fa-solid fa-rocket"></i>';
+                        pText.innerText = "جاهز.";
+                        progress.style.width = '0%';
+                        isDownloading = false;
+                        logMsg("✅ تمت جميع العمليات بنجاح.");
+                        
+                        // Fake Download trigger
+                        logMsg("يرجى مراجعة مجلد التنزيلات في متصفحك.");
+                    }, 2000);
+                } else {
+                    progress.style.width = progressValue + '%';
+                    pText.innerText = `تحميل: ${progressValue}% | السرعة: 3.2 MiB/s`;
+                    logMsg(`تحميل: ${progressValue}% | السرعة: 3.2 MiB/s`);
+                }
+            }, 600);
+        }
+
+        // Keyboard Shortcut Ctrl+V detection on input
+        document.getElementById('urlInput').addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'v') {
+                // Let default paste happen, just log it
+                setTimeout(() => {
+                   if(this.value) {
+                       logMsg("تم اكتشاف رابط.");
+                       this.classList.add('border-green-500');
+                       setTimeout(() => this.classList.remove('border-green-500'), 500);
+                   }
+                }, 50);
+            }
+        });
+    </script>
+</body>
+</html>
