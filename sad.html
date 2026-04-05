@@ -62,7 +62,7 @@
         </div>
 
         <div class="p-4 text-center">
-            <span class="text-xs text-gray-500">v4.0 API Powered</span>
+            <span class="text-xs text-gray-500">v4.1 API Multi-Server</span>
         </div>
     </aside>
 
@@ -134,7 +134,7 @@
                 <!-- Settings Tab -->
                 <div id="tab-settings" class="space-y-6 hidden">
                     <div class="flex items-center gap-3">
-                        <p class="text-sm font-semibold text-gray-300"><i class="fa-solid fa-circle-info text-blue-400"></i> ملاحظة: نسخة الويب تقوم بالتحميل باستخدام خوادم سحابية مباشرة لضمان السرعة.</p>
+                        <p class="text-sm font-semibold text-gray-300"><i class="fa-solid fa-circle-info text-blue-400"></i> ملاحظة: نسخة الويب تقوم بالتحميل باستخدام خوادم سحابية متعددة لضمان السرعة وتجاوز الحجب.</p>
                     </div>
                     <div>
                         <button onclick="changePath()" class="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-lg text-sm font-semibold transition-colors">
@@ -162,7 +162,7 @@
         <!-- Console Area -->
         <div class="bg-black border border-gray-700 rounded-lg p-3 flex-1 min-h-[150px] flex flex-col font-mono text-xs">
             <div id="consoleLog" class="overflow-y-auto flex-1 text-green-400 space-y-1 whitespace-pre-wrap">--- سجل العمليات ---
-> تم تفعيل النظام السحابي بنجاح.
+> تم تفعيل النظام السحابي متعدد الخوادم بنجاح.
 > جاهز لاستقبال الروابط...</div>
         </div>
 
@@ -229,7 +229,13 @@
             logMsg('تغيير مسار الحفظ يتم إدارته من إعدادات متصفحك.');
         }
 
-        // Real Download Process using Cobalt API
+        // قائمة الخوادم الاحتياطية لتجاوز التوقف (حل إبداعي لمشكلة failed to fetch)
+        const apiServers = [
+            'https://co.wuk.sh/api/json',           // خادم موثوق جداً
+            'https://api.cobalt.tools/api/json',    // الخادم الرسمي
+            'https://cobalt-api.kwiatekmateusz.com/api/json' // خادم احتياطي ثالث
+        ];
+
         let isDownloading = false;
         async function startDownload() {
             if (isDownloading) return;
@@ -252,43 +258,68 @@
             pText.innerText = "جاري جلب ومعالجة الرابط...";
             logMsg(`جاري معالجة الرابط: ${url}`);
 
-            // Get user settings
             const isAudio = !document.getElementById('tab-audio').classList.contains('hidden');
             const vQuality = document.getElementById('videoQuality').value;
             const aFormat = document.getElementById('audioFormat').value;
 
+            let successData = null;
+            let lastErrorMsg = "";
+
+            // حلقة للمرور على الخوادم في حال فشل أحدها
+            for (let i = 0; i < apiServers.length; i++) {
+                const serverUrl = apiServers[i];
+                logMsg(`محاولة الاتصال بالخادم [${i+1}/${apiServers.length}]...`);
+                
+                try {
+                    const response = await fetch(serverUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            url: url,
+                            vQuality: vQuality,
+                            isAudioOnly: isAudio,
+                            aFormat: aFormat
+                        })
+                    });
+
+                    if (!response.ok) throw new Error("تعذر الاتصال بهذا الخادم.");
+
+                    const data = await response.json();
+
+                    if (data.status === 'error') {
+                        throw new Error(data.text || "حدث خطأ غير معروف في الخادم");
+                    }
+
+                    // نجحنا!
+                    successData = data;
+                    break; // الخروج من الحلقة عند النجاح
+
+                } catch (err) {
+                    lastErrorMsg = err.message;
+                    logMsg(`فشل الخادم [${i+1}]: ${lastErrorMsg}`, true);
+                    // في حال كان الفشل بسبب AdBlocker
+                    if(err.message.includes("Failed to fetch") || err.message.includes("NetworkError")) {
+                         logMsg("تنبيه: قد يكون مانع الإعلانات (AdBlocker) يمنع الاتصال، حاول إيقافه مؤقتاً.", true);
+                    }
+                }
+            }
+
             try {
-                // Call public backend (Cobalt API - No Ads, Fast)
-                const response = await fetch('https://api.cobalt.tools/api/json', {
-                    method: 'POST',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        url: url,
-                        vQuality: vQuality,
-                        isAudioOnly: isAudio,
-                        aFormat: aFormat
-                    })
-                });
-
-                if (!response.ok) throw new Error("تعذر الاتصال بالخادم. قد يكون الرابط غير مدعوم.");
-
-                const data = await response.json();
-
-                if (data.status === 'error') {
-                    throw new Error(data.text || "حدث خطأ غير معروف");
+                if (!successData) {
+                    throw new Error("جميع الخوادم السحابية فشلت في الاستجابة أو الرابط غير مدعوم.");
                 }
 
                 progress.style.width = '100%';
                 pText.innerText = "اكتملت المعالجة! يبدأ التنزيل الآن...";
                 logMsg("✅ تم استخراج الرابط المباشر. يتم فتح التحميل الآن.");
 
-                // Start actual file download
-                let downloadUrl = data.url;
-                if (!downloadUrl && data.picker && data.picker.length > 0) {
-                    downloadUrl = data.picker[0].url;
+                // بدء التحميل الفعلي
+                let downloadUrl = successData.url;
+                if (!downloadUrl && successData.picker && successData.picker.length > 0) {
+                    downloadUrl = successData.picker[0].url;
                 }
 
                 if(downloadUrl) {
@@ -300,8 +331,8 @@
             } catch (err) {
                 progress.style.width = '0%';
                 pText.innerText = "فشلت العملية";
-                logMsg(`❌ خطأ: ${err.message}`, true);
-                alert("خطأ: " + err.message);
+                logMsg(`❌ خطأ نهائي: ${err.message}`, true);
+                alert("خطأ: " + err.message + "\n\nإذا استمرت المشكلة، قم بإيقاف مانع الإعلانات (AdBlocker).");
             } finally {
                 btn.classList.remove('opacity-75', 'cursor-not-allowed');
                 btn.innerHTML = 'بدء التحميل <i class="fa-solid fa-rocket"></i>';
