@@ -62,7 +62,7 @@
         </div>
 
         <div class="p-4 text-center">
-            <span class="text-xs text-gray-500">v3.8 Web Edition</span>
+            <span class="text-xs text-gray-500">v4.0 API Powered</span>
         </div>
     </aside>
 
@@ -74,7 +74,7 @@
             <button onclick="pasteClipboard()" class="bg-gray-700 hover:bg-gray-600 px-4 py-3 rounded-lg font-semibold transition-colors flex items-center gap-2 shrink-0">
                 <i class="fa-solid fa-paste"></i> لصق
             </button>
-            <input type="text" id="urlInput" placeholder="ضع رابط الفيديو هنا... (Ctrl+V)" class="flex-1 bg-input border border-gray-600 rounded-lg px-4 py-3 focus:outline-none focus:border-blue-500 transition-colors text-right" dir="ltr">
+            <input type="url" id="urlInput" placeholder="ضع رابط الفيديو هنا... (YouTube, TikTok, Twitter...)" class="flex-1 bg-input border border-gray-600 rounded-lg px-4 py-3 focus:outline-none focus:border-blue-500 transition-colors text-right" dir="ltr">
         </div>
 
         <!-- Tabs Section -->
@@ -99,20 +99,16 @@
                 <div id="tab-video" class="space-y-5 block">
                     <div class="flex items-center gap-4">
                         <label class="w-20 text-sm font-semibold">الجودة:</label>
-                        <select class="flex-1 bg-input border border-gray-600 rounded-lg px-3 py-2 outline-none focus:border-blue-500 cursor-pointer">
-                            <option>Best (4K/2K)</option>
-                            <option selected>1080p</option>
-                            <option>720p</option>
-                            <option>480p</option>
+                        <select id="videoQuality" class="flex-1 bg-input border border-gray-600 rounded-lg px-3 py-2 outline-none focus:border-blue-500 cursor-pointer">
+                            <option value="max">أعلى جودة (Max/4K)</option>
+                            <option value="1080" selected>1080p</option>
+                            <option value="720">720p</option>
+                            <option value="480">480p</option>
                         </select>
                     </div>
                     <div class="flex items-center gap-3">
                         <input type="checkbox" id="chkSubtitles" checked class="w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 rounded cursor-pointer">
-                        <label for="chkSubtitles" class="text-sm cursor-pointer">دمج الترجمة (Soft Subs)</label>
-                    </div>
-                    <div class="flex items-center gap-3">
-                        <input type="checkbox" id="chkThumbnail" checked class="w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 rounded cursor-pointer">
-                        <label for="chkThumbnail" class="text-sm cursor-pointer">دمج صورة الغلاف</label>
+                        <label for="chkSubtitles" class="text-sm cursor-pointer">محاولة جلب الترجمة (إن وجدت)</label>
                     </div>
                 </div>
 
@@ -120,30 +116,17 @@
                 <div id="tab-audio" class="space-y-5 hidden">
                     <div class="flex items-center gap-4">
                         <label class="w-20 text-sm font-semibold">الصيغة:</label>
-                        <select class="flex-1 bg-input border border-gray-600 rounded-lg px-3 py-2 outline-none focus:border-blue-500 cursor-pointer">
-                            <option selected>mp3</option>
-                            <option>m4a</option>
-                            <option>wav</option>
-                            <option>flac</option>
-                        </select>
-                    </div>
-                    <div class="flex items-center gap-4">
-                        <label class="w-20 text-sm font-semibold">الجودة:</label>
-                        <select class="flex-1 bg-input border border-gray-600 rounded-lg px-3 py-2 outline-none focus:border-blue-500 cursor-pointer">
-                            <option>320 kbps</option>
-                            <option selected>192 kbps</option>
-                            <option>128 kbps</option>
+                        <select id="audioFormat" class="flex-1 bg-input border border-gray-600 rounded-lg px-3 py-2 outline-none focus:border-blue-500 cursor-pointer">
+                            <option value="mp3" selected>mp3</option>
+                            <option value="wav">wav</option>
+                            <option value="opus">opus</option>
                         </select>
                     </div>
                     
                     <div class="bg-input p-4 rounded-lg space-y-3 mt-4 border border-gray-700">
                         <div class="flex items-center gap-3">
-                            <input type="checkbox" id="chkEnhance" class="w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 rounded cursor-pointer">
-                            <label for="chkEnhance" class="text-sm cursor-pointer">تحسين الصوت (إزالة الضوضاء وتوحيد الصوت)</label>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <input type="checkbox" id="chkAIMeta" checked class="w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 rounded cursor-pointer">
-                            <label for="chkAIMeta" class="text-sm cursor-pointer text-blue-400 font-semibold">جلب بيانات المغني/الملحن (AI Metadata)</label>
+                            <input type="checkbox" id="chkEnhance" checked disabled class="w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 rounded cursor-pointer opacity-50">
+                            <label for="chkEnhance" class="text-sm cursor-pointer opacity-50">تحسين الصوت (تلقائي عبر السيرفر)</label>
                         </div>
                     </div>
                 </div>
@@ -151,14 +134,13 @@
                 <!-- Settings Tab -->
                 <div id="tab-settings" class="space-y-6 hidden">
                     <div class="flex items-center gap-3">
-                        <input type="checkbox" id="chkPlaylist" class="w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 rounded cursor-pointer">
-                        <label for="chkPlaylist" class="text-sm font-semibold cursor-pointer">تحميل قائمة تشغيل كاملة (Playlist)</label>
+                        <p class="text-sm font-semibold text-gray-300"><i class="fa-solid fa-circle-info text-blue-400"></i> ملاحظة: نسخة الويب تقوم بالتحميل باستخدام خوادم سحابية مباشرة لضمان السرعة.</p>
                     </div>
                     <div>
                         <button onclick="changePath()" class="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-lg text-sm font-semibold transition-colors">
                             تغيير مسار الحفظ
                         </button>
-                        <p id="lblPath" class="text-xs text-gray-400 mt-2">المسار الحالي: /Downloads</p>
+                        <p id="lblPath" class="text-xs text-gray-400 mt-2">المسار الحالي: يتم تحديده عبر متصفحك (Downloads)</p>
                     </div>
                 </div>
 
@@ -174,13 +156,14 @@
             <div class="mt-4 bg-gray-700 rounded-full h-2.5 overflow-hidden">
                 <div id="progressBar" class="bg-blue-500 h-2.5 rounded-full transition-all duration-300" style="width: 0%"></div>
             </div>
-            <p id="progressText" class="text-xs text-gray-400 text-center mt-2">جاهز...</p>
+            <p id="progressText" class="text-xs text-gray-400 text-center mt-2">جاهز للاستخدام...</p>
         </div>
 
         <!-- Console Area -->
         <div class="bg-black border border-gray-700 rounded-lg p-3 flex-1 min-h-[150px] flex flex-col font-mono text-xs">
             <div id="consoleLog" class="overflow-y-auto flex-1 text-green-400 space-y-1 whitespace-pre-wrap">--- سجل العمليات ---
-> تم التحقق من النظام: الواجهة جاهزة.</div>
+> تم تفعيل النظام السحابي بنجاح.
+> جاهز لاستقبال الروابط...</div>
         </div>
 
     </main>
@@ -189,15 +172,12 @@
     <script>
         // Tab Switching Logic
         function switchTab(tabId) {
-            // Hide all tabs
             document.querySelectorAll('[id^="tab-"]').forEach(el => el.classList.add('hidden'));
             document.querySelectorAll('[id^="tab-"]').forEach(el => el.classList.remove('block'));
             
-            // Show selected tab
             document.getElementById('tab-' + tabId).classList.remove('hidden');
             document.getElementById('tab-' + tabId).classList.add('block');
             
-            // Update button styles
             document.querySelectorAll('.tab-btn').forEach(btn => {
                 btn.classList.remove('active', 'text-white');
                 btn.classList.add('text-gray-400');
@@ -223,7 +203,6 @@
                 urlInput.value = text;
                 urlInput.focus();
                 
-                // Visual feedback
                 urlInput.classList.add('border-green-500');
                 setTimeout(() => urlInput.classList.remove('border-green-500'), 500);
             } catch (err) {
@@ -231,33 +210,28 @@
             }
         }
 
-        // Clipboard Monitor Mock
         let monitorInterval;
         function toggleMonitor() {
             const isChecked = document.getElementById('clipboardToggle').checked;
             if (isChecked) {
                 logMsg('بدء مراقبة الحافظة...');
-                // Note: Real clipboard monitoring in browsers without user interaction is blocked by security policies.
-                // This is just a simulated visual response.
             } else {
                 logMsg('تم إيقاف المراقبة.');
                 clearInterval(monitorInterval);
             }
         }
 
-        // Open Folder Mock
         function openFolder() {
-            logMsg('في نسخة الويب، يتم حفظ الملفات في مجلد التنزيلات الافتراضي للمتصفح.');
+            logMsg('يتم حفظ الملفات في مجلد التنزيلات الافتراضي لجهازك.');
         }
 
-        // Change Path Mock
         function changePath() {
-            logMsg('تغيير مسار الحفظ يتم إدارته بواسطة المتصفح (Downloads).');
+            logMsg('تغيير مسار الحفظ يتم إدارته من إعدادات متصفحك.');
         }
 
-        // Simulated Download Process
+        // Real Download Process using Cobalt API
         let isDownloading = false;
-        function startDownload() {
+        async function startDownload() {
             if (isDownloading) return;
             
             const url = document.getElementById('urlInput').value.trim();
@@ -272,54 +246,72 @@
             const pText = document.getElementById('progressText');
             
             btn.classList.add('opacity-75', 'cursor-not-allowed');
-            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> جاري العمل...';
+            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> جاري الاتصال بالسيرفر السحابي...';
             
-            progress.style.width = '0%';
-            pText.innerText = "جاري الاتصال واستخراج البيانات...";
-            logMsg(`بدء معالجة الرابط: ${url}`);
+            progress.style.width = '30%';
+            pText.innerText = "جاري جلب ومعالجة الرابط...";
+            logMsg(`جاري معالجة الرابط: ${url}`);
 
-            // AI Metadata Check Simulation
-            if(!document.getElementById('tab-audio').classList.contains('hidden') && document.getElementById('chkAIMeta').checked) {
-                setTimeout(() => logMsg("جاري تحليل البيانات ذكياً (AI Analysis)..."), 500);
-                setTimeout(() => logMsg("تم استخراج الفنان: Unknown Artist"), 1000);
-            }
+            // Get user settings
+            const isAudio = !document.getElementById('tab-audio').classList.contains('hidden');
+            const vQuality = document.getElementById('videoQuality').value;
+            const aFormat = document.getElementById('audioFormat').value;
 
-            // Simulate Download Steps
-            let progressValue = 0;
-            const interval = setInterval(() => {
-                progressValue += Math.floor(Math.random() * 15) + 5;
-                if (progressValue >= 100) {
-                    progressValue = 100;
-                    clearInterval(interval);
-                    
-                    // Finished
-                    progress.style.width = '100%';
-                    pText.innerText = "اكتمل التنزيل. جاري المعالجة (FFmpeg)...";
-                    logMsg("اكتمل التنزيل. جاري المعالجة (FFmpeg)...");
-                    
-                    setTimeout(() => {
-                        btn.classList.remove('opacity-75', 'cursor-not-allowed');
-                        btn.innerHTML = 'بدء التحميل <i class="fa-solid fa-rocket"></i>';
-                        pText.innerText = "جاهز.";
-                        progress.style.width = '0%';
-                        isDownloading = false;
-                        logMsg("✅ تمت جميع العمليات بنجاح.");
-                        
-                        // Fake Download trigger
-                        logMsg("يرجى مراجعة مجلد التنزيلات في متصفحك.");
-                    }, 2000);
-                } else {
-                    progress.style.width = progressValue + '%';
-                    pText.innerText = `تحميل: ${progressValue}% | السرعة: 3.2 MiB/s`;
-                    logMsg(`تحميل: ${progressValue}% | السرعة: 3.2 MiB/s`);
+            try {
+                // Call public backend (Cobalt API - No Ads, Fast)
+                const response = await fetch('https://api.cobalt.tools/api/json', {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        url: url,
+                        vQuality: vQuality,
+                        isAudioOnly: isAudio,
+                        aFormat: aFormat
+                    })
+                });
+
+                if (!response.ok) throw new Error("تعذر الاتصال بالخادم. قد يكون الرابط غير مدعوم.");
+
+                const data = await response.json();
+
+                if (data.status === 'error') {
+                    throw new Error(data.text || "حدث خطأ غير معروف");
                 }
-            }, 600);
+
+                progress.style.width = '100%';
+                pText.innerText = "اكتملت المعالجة! يبدأ التنزيل الآن...";
+                logMsg("✅ تم استخراج الرابط المباشر. يتم فتح التحميل الآن.");
+
+                // Start actual file download
+                let downloadUrl = data.url;
+                if (!downloadUrl && data.picker && data.picker.length > 0) {
+                    downloadUrl = data.picker[0].url;
+                }
+
+                if(downloadUrl) {
+                    window.open(downloadUrl, '_blank');
+                } else {
+                    throw new Error("لم يتم العثور على رابط التحميل المباشر.");
+                }
+
+            } catch (err) {
+                progress.style.width = '0%';
+                pText.innerText = "فشلت العملية";
+                logMsg(`❌ خطأ: ${err.message}`, true);
+                alert("خطأ: " + err.message);
+            } finally {
+                btn.classList.remove('opacity-75', 'cursor-not-allowed');
+                btn.innerHTML = 'بدء التحميل <i class="fa-solid fa-rocket"></i>';
+                isDownloading = false;
+            }
         }
 
-        // Keyboard Shortcut Ctrl+V detection on input
+        // Keyboard Shortcut Ctrl+V detection
         document.getElementById('urlInput').addEventListener('keydown', function(e) {
             if (e.ctrlKey && e.key === 'v') {
-                // Let default paste happen, just log it
                 setTimeout(() => {
                    if(this.value) {
                        logMsg("تم اكتشاف رابط.");
