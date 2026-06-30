@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>تِكِت — مهام التصميم بالساعة</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;700;800&family=Tajawal:wght@400;500;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --radius-card: 14px;
+    --radius-sm: 8px;
+    --font-display:'Cairo',sans-serif;
+    --font-body:'Tajawal',sans-serif;
+    --font-mono:'IBM Plex Mono',monospace;
+    --brass:#D9A155;
+    --brass-dim:#B98748;
+    --rush:#D6492F;
+    --sage:#5FAE8D;
+    --amber-warn:#E0A93B;
+  }
+  html[data-theme="dark"]{
+    --bg:#14171C;
+    --panel:#1B1F26;
+    --panel-2:#20262E;
+    --border:#2B313B;
+    --text:#EDE6D8;
+    --text-dim:#8C9099;
+    --rush-tint:#3A2420;
+    --sage-tint:#1E332B;
+    --brass-tint:#3A2E1C;
+    --shadow: 0 1px 0 rgba(0,0,0,.4);
+  }
+  html[data-theme="light"]{
+    --bg:#EFE7D6;
+    --panel:#FBF7EC;
+    --panel-2:#F3ECDB;
+    --border:#DDD0AE;
+    --text:#26211A;
+    --text-dim:#6E6553;
+    --rush-tint:#F6DCD4;
+    --sage-tint:#DCEEE3;
+    --brass-tint:#F3E2C4;
+    --brass:#AD7A38;
+    --brass-dim:#8E632C;
+    --rush:#BD3F2B;
+    --sage:#3D8164;
+    --amber-warn:#B8842B;
+    --shadow: 0 1px 0 rgba(0,0,0,.05);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--font-body);
+    min-height:100vh;
+    transition:background .25s ease, color .25s ease;
+  }
+  body::before{
+    content:"";
+    position:fixed; inset:0; pointer-events:none; z-index:0;
+    background-image:
+      radial-gradient(circle at 1px 1px, rgba(255,255,255,0.035) 1px, transparent 1px);
+    background-size: 22px 22px;
+    opacity:.5;
+  }
+  html[data-theme="light"] body::before{
+    background-image: radial-gradient(circle at 1px 1px, rgba(0,0,0,0.05) 1px, transparent 1px);
+  }
+  .wrap{position:relative; z-index:1; max-width:1180px; margin:0 auto; padding:0 20px 60px;}
+  a{color:inherit;}
+  button{font-family:inherit; cursor:pointer;}
+  input,select,textarea{font-family:inherit;}
+  .ltr{direction:ltr; unicode-bidi:isolate; display:inline-block;}
+
+  /* ---------- Loading ---------- */
+  #loadingScreen{
+    position:fixed; inset:0; background:var(--bg); z-index:999;
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px;
+    transition:opacity .35s ease;
+  }
+  .loader-ring{width:46px;height:46px;border-radius:50%;border:3px solid var(--border);border-top-color:var(--brass); animation:spin 0.9s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  #loadingScreen p{color:var(--text-dim); font-size:13px; letter-spacing:.3px;}
+
+  /* ---------- Topbar ---------- */
+  .topbar{
+    position:sticky; top:0; z-index:30;
+    background:color-mix(in srgb, var(--bg) 88%, transparent);
+    backdrop-filter: blur(8px);
+    border-bottom:1px solid var(--border);
+  }
+  .topbar-inner{
+    max-width:1180px; margin:0 auto; padding:14px 20px;
+    display:flex; align-items:center; gap:18px; flex-wrap:wrap;
+  }
+  .brand{display:flex; align-items:center; gap:10px;}
+  .brand-name{font-family:var(--font-display); font-weight:800; font-size:21px; letter-spacing:.2px;}
+  .brand-tag{font-size:11px; color:var(--text-dim); margin-top:-2px;}
+  .ticker{
+    font-family:var(--font-mono); font-size:12.5px; color:var(--text-dim);
+    display:flex; gap:14px; align-items:center; flex-wrap:wrap;
+  }
+  .ticker b{color:var(--text); font-weight:600;}
+  .dot-sep{width:3px;height:3px;border-radius:50%;background:var(--border);display:inline-block;}
+  .topbar-actions{display:flex; gap:8px; margin-inline-start:auto; align-items:center;}
+  .icon-btn{
+    width:36px;height:36px; display:flex; align-items:center; justify-content:center;
+    background:var(--panel); border:1px solid var(--border); border-radius:10px; color:var(--text);
+    transition:border-color .15s, transform .1s;
+  }
+  .icon-btn:hover{border-color:var(--brass-dim);}
+  .icon-btn:active{transform:scale(.94);}
+  .icon-btn.active-on{color:var(--brass); border-color:var(--brass-dim);}
+  .btn-primary{
+    display:flex; align-items:center; gap:7px;
+    background:var(--brass); color:#1A1406; border:none; border-radius:10px;
+    padding:9px 16px; font-weight:700; font-size:14px; box-shadow:var(--shadow);
+    transition:filter .15s, transform .1s;
+  }
+  .btn-primary:hover{filter:brightness(1.08);}
+  .btn-primary:active{transform:scale(.97);}
+  html[data-theme="light"] .btn-primary{color:#fff;}
+
+  /* ---------- Dashboard stats ---------- */
+  .stats-row{
+    display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin:22px 0 18px;
+  }
+  @media (max-width:760px){ .stats-row{grid-template-columns:repeat(2,1fr);} }
+  .stat-card{
+    background:var(--panel); border:1px solid var(--border); border-radius:var(--radius-card);
+    padding:14px 16px; display:flex; flex-direction:column; gap:6px;
+    animation:fadeUp .4s ease both;
+  }
+  .stat-top{display:flex; align-items:center; justify-content:space-between; color:var(--text-dim); font-size:12.5px;}
+  .stat-num{font-family:var(--font-mono); font-size:26px; font-weight:600; direction:ltr; text-align:right;}
+  html[dir="rtl"] .stat-num{text-align:left;}
+  .stat-card.rush .stat-num{color:var(--rush);}
+  .stat-card.sage .stat-num{color:var(--sage);}
+  .stat-card.brass .stat-num{color:var(--brass);}
+
+  @keyframes fadeUp{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);}}
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.001s !important; transition-duration:0.001s !important;}
+  }
+
+  /* ---------- Controls ---------- */
+  .controlbar{
+    display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:18px;
+  }
+  .search-box{
+    flex:1 1 220px; display:flex; align-items:center; gap:8px;
+    background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:8px 12px;
+    color:var(--text-dim);
+  }
+  .search-box input{background:none; border:none; outline:none; color:var(--text); width:100%; font-size:13.5px;}
+  .chips{display:flex; gap:6px; flex-wrap:wrap;}
+  .chip{
+    border:1px solid var(--border); background:var(--panel); color:var(--text-dim);
+    border-radius:999px; padding:7px 14px; font-size:13px; transition:all .15s;
+  }
+  .chip.active{background:var(--brass-tint); color:var(--brass); border-color:var(--brass-dim); font-weight:700;}
+  select.sortsel{
+    background:var(--panel); border:1px solid var(--border); color:var(--text);
+    border-radius:10px; padding:8px 10px; font-size:13px;
+  }
+  .focus-toggle{
+    display:flex; align-items:center; gap:6px; border:1px solid var(--border); background:var(--panel);
+    border-radius:10px; padding:8px 13px; font-size:13px; color:var(--text-dim);
+  }
+  .focus-toggle.active-on{color:var(--brass); border-color:var(--brass-dim); background:var(--brass-tint);}
+
+  /* ---------- Focus panel ---------- */
+  #focusPanel{display:none; margin-bottom:24px;}
+  .focus-card{
+    background:var(--panel); border:1px solid var(--brass-dim); border-radius:18px; padding:28px;
+    display:flex; gap:28px; align-items:center; flex-wrap:wrap;
+  }
+  .focus-meta{flex:1; min-width:220px;}
+  .focus-label{font-size:12px; color:var(--brass); letter-spacing:1px; font-weight:700;}
+  .focus-title{font-family:var(--font-display); font-weight:800; font-size:24px; margin:6px 0 4px;}
+  .focus-sub{color:var(--text-dim); font-size:13.5px;}
+
+  /* ---------- Grid & Cards ---------- */
+  #grid{
+    display:grid; grid-template-columns:repeat(auto-fill, minmax(290px,1fr)); gap:16px;
+  }
+  .card{
+    position:relative; background:var(--panel); border:1px solid var(--border);
+    border-radius:var(--radius-card); overflow:hidden;
+    animation:fadeUp .35s ease both;
+    transition:box-shadow .2s, border-color .2s;
+  }
+  .card .perf{
+    height:14px;
+    background-image: repeating-radial-gradient(circle at 11px 7px, var(--bg) 0 4px, transparent 4.5px 11px);
+    background-color:var(--panel);
+    border-bottom:1px dashed var(--border);
+  }
+  .card.urgent{border-color:var(--amber-warn);}
+  .card.overdue{border-color:var(--rush);}
+  .card.overdue{animation:fadeUp .35s ease both, pulseRush 2.4s ease-in-out infinite;}
+  @keyframes pulseRush{0%,100%{box-shadow:0 0 0 0 rgba(214,73,45,0);} 50%{box-shadow:0 0 0 5px rgba(214,73,45,.10);}}
+  .card-body{padding:16px;}
+  .card-head{display:flex; justify-content:space-between; align-items:flex-start; gap:8px;}
+  .ticket-no{font-family:var(--font-mono); font-size:11px; color:var(--text-dim); direction:ltr; display:inline-block;}
+  .priority-badge{font-size:10.5px; padding:3px 8px; border-radius:999px; font-weight:700;}
+  .priority-badge.high{background:var(--rush-tint); color:var(--rush);}
+  .priority-badge.medium{background:var(--brass-tint); color:var(--brass);}
+  .priority-badge.low{background:var(--sage-tint); color:var(--sage);}
+  .card-title{font-family:var(--font-display); font-weight:700; font-size:17px; margin:10px 0 2px; line-height:1.4;}
+  .card-client{font-size:12.5px; color:var(--text-dim);}
+  .card-type{display:inline-block; margin-top:8px; font-size:11.5px; color:var(--text-dim); border:1px solid var(--border); border-radius:6px; padding:2px 8px;}
+
+  .dial-row{display:flex; align-items:center; gap:14px; margin-top:14px;}
+  .dial-wrap{position:relative; width:78px; height:78px; flex:none;}
+  .dial-wrap svg{width:78px; height:78px; transform:rotate(-90deg);}
+  .dial-track{fill:none; stroke:var(--border); stroke-width:7;}
+  .dial-arc{fill:none; stroke-width:7; stroke-linecap:round; transition:stroke-dashoffset .6s ease, stroke .3s ease;}
+  .dial-center{position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;}
+  .dial-num{font-family:var(--font-mono); font-weight:600; font-size:16px; direction:ltr;}
+  .dial-unit{font-size:9.5px; color:var(--text-dim); margin-top:-2px;}
+  .time-status{flex:1;}
+  .time-label{font-size:11px; color:var(--text-dim); margin-bottom:3px;}
+  .time-value{font-family:var(--font-mono); font-size:14px; font-weight:600; direction:ltr; display:inline-block;}
+  .time-value.safe{color:var(--sage);}
+  .time-value.warn{color:var(--amber-warn);}
+  .time-value.crit, .time-value.over{color:var(--rush);}
+  .status-pill{display:inline-block; margin-top:6px; font-size:11px; padding:2px 8px; border-radius:6px; background:var(--panel-2); color:var(--text-dim);}
+  .status-pill.done{background:var(--sage-tint); color:var(--sage);}
+
+  .card-actions{display:flex; gap:6px; padding:10px 14px 14px; border-top:1px solid var(--border); flex-wrap:wrap;}
+  .mini-btn{
+    display:flex; align-items:center; gap:5px; font-size:12px; color:var(--text-dim);
+    background:var(--panel-2); border:1px solid var(--border); border-radius:8px; padding:6px 10px;
+    transition:color .15s, border-color .15s;
+  }
+  .mini-btn:hover{color:var(--text); border-color:var(--brass-dim);}
+  .mini-btn.go{color:var(--sage);}
+
+  .empty-state{
+    grid-column:1/-1; text-align:center; padding:60px 20px; color:var(--text-dim);
+    border:1px dashed var(--border); border-radius:16px;
+  }
+  .empty-state h3{font-family:var(--font-display); color:var(--text); margin-bottom:6px;}
+
+  /* ---------- Modal ---------- */
+  .overlay{
+    position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:60;
+    display:none; align-items:center; justify-content:center; padding:20px;
+  }
+  .overlay.show{display:flex;}
+  .modal{
+    background:var(--panel); border-radius:18px; width:100%; max-width:520px; max-height:88vh; overflow-y:auto;
+    border:1px solid var(--border);
+  }
+  .modal-perf{ height:16px; background-image: repeating-radial-gradient(circle at 12px 8px, var(--bg) 0 4.5px, transparent 5px 12px); background-color:var(--panel); border-bottom:1px dashed var(--border);}
+  .modal-pad{padding:22px 24px 26px;}
+  .modal-head{display:flex; justify-content:space-between; align-items:center; margin-bottom:18px;}
+  .modal-head h2{font-family:var(--font-display); font-size:19px; margin:0;}
+  .field{margin-bottom:15px;}
+  .field label{display:block; font-size:12.5px; color:var(--text-dim); margin-bottom:6px; font-weight:600;}
+  .field input[type=text], .field input[type=number], .field input[type=datetime-local], .field textarea, .field select{
+    width:100%; background:var(--panel-2); border:1px solid var(--border); color:var(--text);
+    border-radius:10px; padding:10px 12px; font-size:13.5px; outline:none;
+  }
+  .field textarea{resize:vertical; min-height:60px;}
+  .field input:focus, .field select:focus, .field textarea:focus{border-color:var(--brass-dim);}
+  .two-col{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+  .pill-group{display:flex; gap:8px; flex-wrap:wrap;}
+  .pill-radio{position:relative;}
+  .pill-radio input{position:absolute; opacity:0; inset:0; cursor:pointer;}
+  .pill-radio span{
+    display:inline-block; padding:7px 14px; border-radius:999px; border:1px solid var(--border);
+    font-size:12.5px; color:var(--text-dim); background:var(--panel-2);
+  }
+  .pill-radio input:checked + span{border-color:var(--brass-dim); color:var(--brass); background:var(--brass-tint); font-weight:700;}
+  .tabbar{display:flex; gap:6px; margin-bottom:12px; background:var(--panel-2); border-radius:10px; padding:4px;}
+  .tabbar button{flex:1; padding:8px; border:none; background:none; border-radius:8px; color:var(--text-dim); font-size:12.5px; font-weight:600;}
+  .tabbar button.active{background:var(--panel); color:var(--brass); box-shadow:var(--shadow);}
+  .hour-chips{display:flex; gap:6px; margin-top:8px; flex-wrap:wrap;}
+  .hour-chip{border:1px solid var(--border); background:var(--panel-2); border-radius:8px; padding:5px 11px; font-size:12px; color:var(--text-dim); direction:ltr;}
+  .hour-chip:hover{border-color:var(--brass-dim); color:var(--brass);}
+  .modal-foot{display:flex; gap:10px; margin-top:8px;}
+  .btn-ghost{flex:1; padding:10px; border-radius:10px; border:1px solid var(--border); background:var(--panel-2); color:var(--text-dim); font-weight:600; font-size:13.5px;}
+  .btn-submit{flex:2; padding:10px; border-radius:10px; border:none; background:var(--brass); color:#1A1406; font-weight:700; font-size:13.5px;}
+  html[data-theme="light"] .btn-submit{color:#fff;}
+
+  /* ---------- Toasts ---------- */
+  #toastStack{position:fixed; bottom:18px; inset-inline-end:18px; z-index:90; display:flex; flex-direction:column; gap:8px; max-width:300px;}
+  .toast{
+    background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:11px 14px;
+    font-size:13px; box-shadow:0 6px 18px rgba(0,0,0,.25); animation:toastIn .25s ease;
+    display:flex; gap:8px; align-items:flex-start;
+  }
+  .toast.rush{border-color:var(--rush);}
+  @keyframes toastIn{from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);}}
+
+  /* ---------- Footer ---------- */
+  .footer{margin-top:36px; display:flex; justify-content:space-between; align-items:center; color:var(--text-dim); font-size:12px; flex-wrap:wrap; gap:8px;}
+  .reset-link{color:var(--text-dim); text-decoration:underline; background:none; border:none; font-size:12px;}
+  .reset-link:hover{color:var(--rush);}
+
+  /* ---------- Print ---------- */
+  #printArea{display:none;}
+  @media print{
+    body *{visibility:hidden;}
+    #printArea, #printArea *{visibility:visible;}
+    #printArea{display:block; position:absolute; top:0; right:0; left:0; padding:30px; background:#fff; color:#111;}
+  }
+</style>
+</head>
+<body>
+
+<div id="loadingScreen">
+  <div class="loader-ring"></div>
+  <p>جارٍ فتح دفتر التذاكر…</p>
+</div>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <svg width="34" height="34" viewBox="0 0 34 34" fill="none">
+        <rect x="1" y="5" width="32" height="24" rx="6" fill="var(--brass)"/>
+        <circle cx="1" cy="17" r="3" fill="var(--bg)"/>
+        <circle cx="33" cy="17" r="3" fill="var(--bg)"/>
+        <circle cx="21" cy="17" r="6.2" fill="none" stroke="#1A1406" stroke-width="1.6"/>
+        <path d="M21 13.6V17L23.4 18.8" stroke="#1A1406" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        <line x1="6" y1="12" x2="14" y2="12" stroke="#1A1406" stroke-width="1.6" stroke-linecap="round" opacity=".7"/>
+        <line x1="6" y1="17" x2="14" y2="17" stroke="#1A1406" stroke-width="1.6" stroke-linecap="round" opacity=".5"/>
+        <line x1="6" y1="22" x2="12" y2="22" stroke="#1A1406" stroke-width="1.6" stroke-linecap="round" opacity=".4"/>
+      </svg>
+      <div>
+        <div class="brand-name">تِكِت</div>
+        <div class="brand-tag">تذاكر تصميم بمواعيد تُحسب بالساعة</div>
+      </div>
+    </div>
+
+    <div class="ticker" id="tickerStats"></div>
+
+    <div class="topbar-actions">
+      <button class="icon-btn" id="soundBtn" title="تنبيهات الصوت"></button>
+      <button class="icon-btn" id="themeBtn" title="تبديل المظهر"></button>
+      <button class="btn-primary" id="newTaskBtn">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><line x1="12" y1="5" x2="12" y2="19" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><line x1="5" y1="12" x2="19" y2="12" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+        مهمة جديدة
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <div class="stats-row" id="statsRow"></div>
+
+  <div class="controlbar">
+    <div class="search-box">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><line x1="21" y1="21" x2="16.6" y2="16.6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      <input type="text" id="searchInput" placeholder="ابحث بعنوان التصميم أو اسم العميل…">
+    </div>
+    <div class="chips" id="filterChips">
+      <button class="chip active" data-filter="all">الكل</button>
+      <button class="chip" data-filter="active">نشطة</button>
+      <button class="chip" data-filter="overdue">متأخرة</button>
+      <button class="chip" data-filter="done">مكتملة</button>
+    </div>
+    <select class="sortsel" id="sortSel">
+      <option value="urgent">الأقرب تسليمًا</option>
+      <option value="newest">الأحدث إضافة</option>
+      <option value="priority">الأولوية</option>
+    </select>
+    <button class="focus-toggle" id="focusBtn">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/></svg>
+      وضع التركيز
+    </button>
+  </div>
+
+  <div id="focusPanel"></div>
+
+  <div id="grid"></div>
+
+  <div class="footer">
+    <span>تِكِت — صُنع لتسليم التصاميم في وقتها، ساعة بساعة.</span>
+    <span style="display:flex; gap:14px; align-items:center;">
+      <button class="reset-link" id="exportBtn">تصدير نسخة احتياطية</button>
+      <label class="reset-link" for="importInput" style="cursor:pointer;">استيراد نسخة احتياطية</label>
+      <input type="file" id="importInput" accept="application/json" style="display:none;">
+      <button class="reset-link" id="resetBtn">حذف جميع التذاكر</button>
+    </span>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-perf"></div>
+    <div class="modal-pad">
+      <div class="modal-head">
+        <h2 id="modalTitle">تذكرة تصميم جديدة</h2>
+        <button class="icon-btn" id="closeModalBtn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><line x1="4" y1="4" x2="20" y2="20" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><line x1="20" y1="4" x2="4" y2="20" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+
+      <form id="taskForm">
+        <div class="field">
+          <label>عنوان التصميم *</label>
+          <input type="text" id="f_title" placeholder="مثال: تصميم بوست انستغرام لمطعم..." required>
+        </div>
+        <div class="two-col">
+          <div class="field">
+            <label>العميل</label>
+            <input type="text" id="f_client" placeholder="اسم العميل (اختياري)">
+          </div>
+          <div class="field">
+            <label>نوع التصميم</label>
+            <select id="f_type">
+              <option>شعار وهوية بصرية</option>
+              <option>سوشال ميديا</option>
+              <option>واجهات UI/UX</option>
+              <option>طباعة ومطبوعات</option>
+              <option>تغليف ومنتج</option>
+              <option>أخرى</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>الأولوية</label>
+          <div class="pill-group">
+            <label class="pill-radio"><input type="radio" name="priority" value="high"><span>عالية</span></label>
+            <label class="pill-radio"><input type="radio" name="priority" value="medium" checked><span>متوسطة</span></label>
+            <label class="pill-radio"><input type="radio" name="priority" value="low"><span>منخفضة</span></label>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>الموعد النهائي (الديدلاين)</label>
+          <div class="tabbar">
+            <button type="button" class="active" data-mode="hours">بالساعات من الآن</button>
+            <button type="button" data-mode="date">تاريخ ووقت محدد</button>
+          </div>
+
+          <div id="modeHours">
+            <input type="number" id="f_hours" min="1" step="1" placeholder="عدد الساعات المتاحة" value="24">
+            <div class="hour-chips">
+              <button type="button" class="hour-chip" data-h="1">1 س</button>
+              <button type="button" class="hour-chip" data-h="4">4 س</button>
+              <button type="button" class="hour-chip" data-h="8">8 س</button>
+              <button type="button" class="hour-chip" data-h="24">24 س</button>
+              <button type="button" class="hour-chip" data-h="48">48 س</button>
+              <button type="button" class="hour-chip" data-h="72">72 س</button>
+            </div>
+          </div>
+          <div id="modeDate" style="display:none;">
+            <input type="datetime-local" id="f_date">
+          </div>
+        </div>
+
+        <div class="field">
+          <label>ملاحظات</label>
+          <textarea id="f_notes" placeholder="أي تفاصيل تخص التذكرة (اختياري)"></textarea>
+        </div>
+
+        <input type="hidden" id="f_id">
+        <div class="modal-foot">
+          <button type="button" class="btn-ghost" id="cancelBtn">إلغاء</button>
+          <button type="submit" class="btn-submit" id="submitBtn">إنشاء التذكرة</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div id="toastStack"></div>
+<div id="printArea"></div>
+
+<script>
+(function(){
+
+/* ============ ICONS ============ */
+const ICON = {
+  sun:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="4.2" stroke="currentColor" stroke-width="2"/><g stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="2.5" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="21.5"/><line x1="2.5" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="21.5" y2="12"/><line x1="4.5" y1="4.5" x2="6.3" y2="6.3"/><line x1="17.7" y1="17.7" x2="19.5" y2="19.5"/><line x1="4.5" y1="19.5" x2="6.3" y2="17.7"/><line x1="17.7" y1="6.3" x2="19.5" y2="4.5"/></g></svg>',
+  moon:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>',
+  bell:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M7 10a5 5 0 0 1 10 0c0 3 1 4.4 2 5.5H5c1-1.1 2-2.5 2-5.5Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M10 19a2 2 0 0 0 4 0" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
+  bellOff:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M7 10a5 5 0 0 1 10 0c0 3 1 4.4 2 5.5H5c1-1.1 2-2.5 2-5.5Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round" opacity=".45"/><path d="M10 19a2 2 0 0 0 4 0" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity=".45"/><line x1="3.5" y1="3.5" x2="20.5" y2="20.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
+  edit:'<svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M4 17.5V20h2.5L17 9.5 14.5 7 4 17.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><line x1="13" y1="8.5" x2="15.5" y2="11" stroke="currentColor" stroke-width="1.8"/></svg>',
+  trash:'<svg width="13" height="13" viewBox="0 0 24 24" fill="none"><line x1="5" y1="7" x2="19" y2="7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M8 7V5.5A1.5 1.5 0 0 1 9.5 4h5A1.5 1.5 0 0 1 16 5.5V7M9 7v12.5A1.5 1.5 0 0 0 10.5 21h3a1.5 1.5 0 0 0 1.5-1.5V7" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>',
+  play:'<svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M7 5.5v13l11-6.5-11-6.5Z" fill="currentColor"/></svg>',
+  check:'<svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M4.5 12.5l5 5 10-11" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  printer:'<svg width="13" height="13" viewBox="0 0 24 24" fill="none"><rect x="6" y="3.5" width="12" height="6" stroke="currentColor" stroke-width="1.8"/><rect x="4" y="9.5" width="16" height="8" rx="1.5" stroke="currentColor" stroke-width="1.8"/><rect x="8" y="14" width="8" height="5" stroke="currentColor" stroke-width="1.8"/></svg>',
+  target:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/></svg>'
+};
+
+/* ============ STATE ============ */
+let tasks = [];
+let settings = { theme:'dark', sound:true, focus:false };
+let filter = 'all';
+let sortMode = 'urgent';
+let searchTerm = '';
+let audioCtx = null;
+
+const $ = sel => document.querySelector(sel);
+const $$ = sel => Array.from(document.querySelectorAll(sel));
+
+/* ============ STORAGE ============ */
+const cloudAvailable = !!(window.storage && typeof window.storage.get==='function' && typeof window.storage.set==='function');
+
+async function loadData(){
+  if(!cloudAvailable){ return; }
+  try{
+    const t = await window.storage.get('tasks');
+    tasks = t && t.value ? JSON.parse(t.value) : [];
+  }catch(e){ tasks = []; }
+  try{
+    const s = await window.storage.get('settings');
+    if(s && s.value) settings = Object.assign(settings, JSON.parse(s.value));
+  }catch(e){ /* defaults stand */ }
+}
+async function saveTasks(){
+  if(!cloudAvailable) return;
+  try{ await window.storage.set('tasks', JSON.stringify(tasks)); }
+  catch(e){ toast('تعذّر حفظ البيانات، حاول مرة أخرى.', true); }
+}
+async function saveSettings(){
+  if(!cloudAvailable) return;
+  try{ await window.storage.set('settings', JSON.stringify(settings)); }catch(e){}
+}
+
+/* ============ HELPERS ============ */
+function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
+function nextTicketNo(){
+  return tasks.reduce((m,t)=>Math.max(m, t.ticketNo||0), 0) + 1;
+}
+function clamp(v,a,b){ return Math.max(a, Math.min(b,v)); }
+
+function deriveTask(t){
+  const now = Date.now();
+  const deadline = new Date(t.deadline).getTime();
+  const created = new Date(t.createdAt).getTime();
+  const remaining = deadline - now;
+  const total = Math.max(deadline - created, 1);
+  const isDone = t.status === 'done';
+  const isOverdue = !isDone && remaining <= 0;
+  let urgency = 'safe';
+  if(!isDone){
+    if(isOverdue) urgency = 'over';
+    else if(remaining <= 60*60*1000) urgency = 'crit';
+    else if(remaining <= 6*60*60*1000) urgency = 'warn';
+  }
+  const fraction = isDone ? 1 : clamp(remaining/total, 0, 1);
+  return { now, deadline, created, remaining, total, isDone, isOverdue, urgency, fraction };
+}
+
+function fmtDuration(ms){
+  const abs = Math.abs(ms);
+  const totalMin = Math.floor(abs/60000);
+  const h = Math.floor(totalMin/60);
+  const m = totalMin % 60;
+  if(h <= 0) return m + ' د';
+  return h + ' س ' + m + ' د';
+}
+
+function fmtDateTime(iso){
+  const d = new Date(iso);
+  return d.toLocaleString('ar', { day:'numeric', month:'short', hour:'numeric', minute:'2-digit' });
+}
+
+const URG_COLOR = { safe:'var(--sage)', warn:'var(--amber-warn)', crit:'var(--rush)', over:'var(--rush)' };
+const URG_CLASS = { safe:'safe', warn:'warn', crit:'crit', over:'over' };
+
+/* ============ AUDIO ALERT ============ */
+function beep(){
+  if(!settings.sound) return;
+  try{
+    audioCtx = audioCtx || new (window.AudioContext||window.webkitAudioContext)();
+    const o = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    o.type = 'sine'; o.frequency.value = 880;
+    g.gain.value = 0.001;
+    o.connect(g); g.connect(audioCtx.destination);
+    const t0 = audioCtx.currentTime;
+    g.gain.exponentialRampToValueAtTime(0.06, t0+0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0+0.35);
+    o.start(t0); o.stop(t0+0.4);
+  }catch(e){}
+}
+
+/* ============ TOASTS ============ */
+function toast(msg, isRush){
+  const stack = $('#toastStack');
+  const el = document.createElement('div');
+  el.className = 'toast' + (isRush ? ' rush' : '');
+  el.innerHTML = '<span>'+ msg +'</span>';
+  stack.appendChild(el);
+  setTimeout(()=>{ el.style.opacity='0'; el.style.transition='opacity .3s'; setTimeout(()=>el.remove(), 300); }, 4200);
+}
+
+/* ============ RENDER: TICKER + STATS ============ */
+function computeStats(){
+  const total = tasks.length;
+  const done = tasks.filter(t=>t.status==='done');
+  const active = tasks.filter(t=>{ const d=deriveTask(t); return !d.isDone && !d.isOverdue; });
+  const overdue = tasks.filter(t=>{ const d=deriveTask(t); return !d.isDone && d.isOverdue; });
+  const onTimeDone = done.filter(t=> new Date(t.doneAt).getTime() <= new Date(t.deadline).getTime());
+  const rate = done.length ? Math.round((onTimeDone.length/done.length)*100) : 100;
+  return { total, doneCount:done.length, activeCount:active.length, overdueCount:overdue.length, rate };
+}
+
+function renderStats(){
+  const s = computeStats();
+  $('#tickerStats').innerHTML =
+    `نشطة الآن <b>${s.activeCount}</b><span class="dot-sep"></span>متأخرة <b>${s.overdueCount}</b><span class="dot-sep"></span>الالتزام <b>${s.rate}%</b>`;
+
+  $('#statsRow').innerHTML = `
+    <div class="stat-card brass">
+      <div class="stat-top"><span>إجمالي التذاكر</span></div>
+      <div class="stat-num">${s.total}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-top"><span>قيد التنفيذ</span></div>
+      <div class="stat-num">${s.activeCount}</div>
+    </div>
+    <div class="stat-card rush">
+      <div class="stat-top"><span>متأخرة</span></div>
+      <div class="stat-num">${s.overdueCount}</div>
+    </div>
+    <div class="stat-card sage">
+      <div class="stat-top"><span>نسبة الالتزام بالمواعيد</span></div>
+      <div class="stat-num">${s.rate}<span style="font-size:14px;">%</span></div>
+    </div>`;
+}
+
+/* ============ DIAL SVG ============ */
+function dialSVG(d, size){
+  const r = (size/2) - 6;
+  const c = 2*Math.PI*r;
+  const offset = c * (1 - d.fraction);
+  const color = d.isDone ? 'var(--sage)' : URG_COLOR[d.urgency];
+  const cx = size/2, cy = size/2;
+  return `<svg viewBox="0 0 ${size} ${size}">
+    <circle class="dial-track" cx="${cx}" cy="${cy}" r="${r}"></circle>
+    <circle class="dial-arc" cx="${cx}" cy="${cy}" r="${r}" stroke="${color}"
+      stroke-dasharray="${c}" stroke-dashoffset="${offset}"></circle>
+  </svg>`;
+}
+
+function dialCenter(d){
+  if(d.isDone) return `<div class="dial-center">${ICON.check.replace('width="13" height="13"','width="20" height="20"')}</div>`;
+  const mins = Math.floor(Math.abs(d.remaining)/60000);
+  const h = Math.floor(mins/60), m = mins%60;
+  const big = h>0 ? h : m;
+  const unit = h>0 ? 'سا' : 'د';
+  return `<div class="dial-center">
+    <span class="dial-num">${big}</span>
+    <span class="dial-unit">${unit}${h>0?(' '+m+'د'):''}</span>
+  </div>`;
+}
+
+/* ============ RENDER: CARD ============ */
+function cardHTML(t){
+  const d = deriveTask(t);
+  const urgClass = d.isOverdue ? 'overdue' : (d.urgency==='warn'||d.urgency==='crit' ? 'urgent' : '');
+  const timeLabel = d.isDone ? 'سُلّمت في' : (d.isOverdue ? 'متأخرة بمقدار' : 'الوقت المتبقي');
+  const timeVal = d.isDone ? fmtDateTime(t.doneAt) : fmtDuration(d.remaining);
+  const timeClass = d.isDone ? '' : URG_CLASS[d.urgency];
+
+  let actions = '';
+  if(!d.isDone){
+    if(t.status==='new'){
+      actions += `<button class="mini-btn go" data-act="start" data-id="${t.id}">${ICON.play}بدء التنفيذ</button>`;
+    }
+    actions += `<button class="mini-btn go" data-act="done" data-id="${t.id}">${ICON.check}تسليم</button>`;
+  }
+  actions += `<button class="mini-btn" data-act="print" data-id="${t.id}">${ICON.printer}طباعة</button>`;
+  actions += `<button class="mini-btn" data-act="edit" data-id="${t.id}">${ICON.edit}تعديل</button>`;
+  actions += `<button class="mini-btn" data-act="del" data-id="${t.id}">${ICON.trash}حذف</button>`;
+
+  const prMap = { high:['high','عالية'], medium:['medium','متوسطة'], low:['low','منخفضة'] };
+  const pr = prMap[t.priority] || prMap.medium;
+
+  return `<div class="card ${urgClass}" data-id="${t.id}">
+    <div class="perf"></div>
+    <div class="card-body">
+      <div class="card-head">
+        <span class="ticket-no">TKT-${String(t.ticketNo).padStart(4,'0')}</span>
+        <span class="priority-badge ${pr[0]}">${pr[1]}</span>
+      </div>
+      <div class="card-title">${escapeHTML(t.title)}</div>
+      <div class="card-client">${t.client ? escapeHTML(t.client) : 'بدون عميل محدد'}</div>
+      <span class="card-type">${escapeHTML(t.type)}</span>
+      ${ d.isDone ? `<div><span class="status-pill done">تم التسليم</span></div>` : '' }
+      <div class="dial-row">
+        <div class="dial-wrap">
+          ${dialSVG(d,78)}
+          ${dialCenter(d)}
+        </div>
+        <div class="time-status">
+          <div class="time-label">${timeLabel}</div>
+          <div class="time-value ${timeClass}">${timeVal}</div>
+        </div>
+      </div>
+    </div>
+    <div class="card-actions">${actions}</div>
+  </div>`;
+}
+
+function escapeHTML(s){
+  return (s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+/* ============ FILTER / SORT ============ */
+function visibleTasks(){
+  let list = tasks.slice();
+  if(searchTerm){
+    const q = searchTerm.toLowerCase();
+    list = list.filter(t => (t.title||'').toLowerCase().includes(q) || (t.client||'').toLowerCase().includes(q));
+  }
+  list = list.filter(t=>{
+    const d = deriveTask(t);
+    if(filter==='active') return !d.isDone && !d.isOverdue;
+    if(filter==='overdue') return !d.isDone && d.isOverdue;
+    if(filter==='done') return d.isDone;
+    return true;
+  });
+  if(sortMode==='urgent'){
+    list.sort((a,b)=>{
+      const da=deriveTask(a), db=deriveTask(b);
+      if(da.isDone !== db.isDone) return da.isDone ? 1 : -1;
+      return da.remaining - db.remaining;
+    });
+  } else if(sortMode==='newest'){
+    list.sort((a,b)=> new Date(b.createdAt) - new Date(a.createdAt));
+  } else if(sortMode==='priority'){
+    const w = {high:0, medium:1, low:2};
+    list.sort((a,b)=> (w[a.priority]??1) - (w[b.priority]??1));
+  }
+  return list;
+}
+
+/* ============ RENDER: GRID + FOCUS ============ */
+function renderGrid(){
+  const list = visibleTasks();
+  if(!list.length){
+    $('#grid').innerHTML = `<div class="empty-state">
+      <h3>لا توجد تذاكر هنا</h3>
+      <p>${tasks.length ? 'جرّب تغيير الفلتر أو البحث.' : 'أنشئ أول تذكرة تصميم وابدأ العدّ التنازلي.'}</p>
+    </div>`;
+  } else {
+    $('#grid').innerHTML = list.map(cardHTML).join('');
+  }
+  renderFocus();
+}
+
+function renderFocus(){
+  const panel = $('#focusPanel');
+  if(!settings.focus){ panel.style.display='none'; return; }
+  const open = tasks.filter(t=>t.status!=='done');
+  if(!open.length){
+    panel.style.display='block';
+    panel.innerHTML = `<div class="empty-state"><h3>لا توجد مهام مفتوحة</h3><p>وضع التركيز يحتاج تذكرة نشطة واحدة على الأقل.</p></div>`;
+    return;
+  }
+  open.sort((a,b)=> deriveTask(a).remaining - deriveTask(b).remaining);
+  const t = open[0];
+  const d = deriveTask(t);
+  panel.style.display='block';
+  panel.innerHTML = `<div class="focus-card">
+    <div class="dial-wrap" style="width:120px;height:120px;">
+      ${dialSVG(d,120).replace('class="dial-arc"','class="dial-arc" style="stroke-width:9"').replace('class="dial-track"','class="dial-track" style="stroke-width:9"')}
+      <div class="dial-center" style="inset:0;">
+        ${ d.isDone ? ICON.check : `<span class="dial-num" style="font-size:24px;">${Math.floor(Math.abs(d.remaining)/60000/60)||Math.floor(Math.abs(d.remaining)/60000)}</span><span class="dial-unit">${Math.floor(Math.abs(d.remaining)/60000/60)>0?'ساعة':'دقيقة'}</span>` }
+      </div>
+    </div>
+    <div class="focus-meta">
+      <div class="focus-label">الأكثر إلحاحًا الآن</div>
+      <div class="focus-title">${escapeHTML(t.title)}</div>
+      <div class="focus-sub">${t.client ? escapeHTML(t.client)+' · ' : ''}${escapeHTML(t.type)} · TKT-${String(t.ticketNo).padStart(4,'0')}</div>
+      <div class="focus-sub" style="margin-top:8px; color:${d.isOverdue?'var(--rush)':'var(--text)'}; font-family:var(--font-mono); direction:ltr; display:inline-block;">
+        ${d.isOverdue ? 'متأخرة بمقدار '+fmtDuration(d.remaining) : 'باقي '+fmtDuration(d.remaining)}
+      </div>
+    </div>
+    <button class="mini-btn go" data-act="done" data-id="${t.id}" style="font-size:13px; padding:9px 16px;">${ICON.check} تسليم الآن</button>
+  </div>`;
+}
+
+/* ============ TICK (live update, no full rebuild) ============ */
+function tick(){
+  renderStats();
+  $$('#grid .card').forEach(card=>{
+    const id = card.dataset.id;
+    const t = tasks.find(x=>x.id===id);
+    if(!t) return;
+    const d = deriveTask(t);
+
+    const arc = card.querySelector('.dial-arc');
+    if(arc){
+      const r = parseFloat(arc.getAttribute('r'));
+      const c = 2*Math.PI*r;
+      arc.setAttribute('stroke-dasharray', c);
+      arc.setAttribute('stroke-dashoffset', c*(1-d.fraction));
+      arc.setAttribute('stroke', d.isDone ? 'var(--sage)' : URG_COLOR[d.urgency]);
+    }
+    const center = card.querySelector('.dial-center');
+    if(center) center.outerHTML = dialCenter(d);
+
+    const timeVal = card.querySelector('.time-value');
+    if(timeVal && !d.isDone){
+      timeVal.textContent = fmtDuration(d.remaining);
+      timeVal.className = 'time-value ' + URG_CLASS[d.urgency];
+    }
+    card.classList.toggle('overdue', d.isOverdue);
+    card.classList.toggle('urgent', !d.isOverdue && (d.urgency==='warn'||d.urgency==='crit'));
+
+    if(!d.isDone && d.urgency==='crit' && !t.alerted){
+      t.alerted = true;
+      toast(`تنبيه: تذكرة TKT-${String(t.ticketNo).padStart(4,'0')} باقي عليها أقل من ساعة!`, true);
+      beep();
+      saveTasks();
+    }
+    if(d.isOverdue && !t.alertedOverdue){
+      t.alertedOverdue = true;
+      toast(`فاتت تذكرة TKT-${String(t.ticketNo).padStart(4,'0')} موعدها.`, true);
+      beep();
+      saveTasks();
+    }
+  });
+  renderFocus();
+}
+
+/* ============ FORM / MODAL ============ */
+let deadlineMode = 'hours';
+function openModal(editId){
+  $('#taskForm').reset();
+  deadlineMode = 'hours';
+  $$('.tabbar button').forEach(b=>b.classList.toggle('active', b.dataset.mode==='hours'));
+  $('#modeHours').style.display='block';
+  $('#modeDate').style.display='none';
+  $('#f_hours').value = 24;
+
+  if(editId){
+    const t = tasks.find(x=>x.id===editId);
+    $('#modalTitle').textContent = 'تعديل التذكرة';
+    $('#submitBtn').textContent = 'حفظ التعديلات';
+    $('#f_id').value = t.id;
+    $('#f_title').value = t.title;
+    $('#f_client').value = t.client||'';
+    $('#f_type').value = t.type;
+    $('#f_notes').value = t.notes||'';
+    document.querySelector(`input[name=priority][value="${t.priority}"]`).checked = true;
+    deadlineMode = 'date';
+    $$('.tabbar button').forEach(b=>b.classList.toggle('active', b.dataset.mode==='date'));
+    $('#modeHours').style.display='none';
+    $('#modeDate').style.display='block';
+    const dt = new Date(t.deadline);
+    dt.setMinutes(dt.getMinutes()-dt.getTimezoneOffset());
+    $('#f_date').value = dt.toISOString().slice(0,16);
+  } else {
+    $('#modalTitle').textContent = 'تذكرة تصميم جديدة';
+    $('#submitBtn').textContent = 'إنشاء التذكرة';
+    $('#f_id').value = '';
+  }
+  $('#modalOverlay').classList.add('show');
+}
+function closeModal(){ $('#modalOverlay').classList.remove('show'); }
+
+$('#newTaskBtn').addEventListener('click', ()=>openModal(null));
+$('#closeModalBtn').addEventListener('click', closeModal);
+$('#cancelBtn').addEventListener('click', closeModal);
+$('#modalOverlay').addEventListener('click', e=>{ if(e.target.id==='modalOverlay') closeModal(); });
+
+$$('.tabbar button').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    deadlineMode = btn.dataset.mode;
+    $$('.tabbar button').forEach(b=>b.classList.toggle('active', b===btn));
+    $('#modeHours').style.display = deadlineMode==='hours' ? 'block':'none';
+    $('#modeDate').style.display = deadlineMode==='date' ? 'block':'none';
+  });
+});
+$$('.hour-chip').forEach(c=>{
+  c.addEventListener('click', ()=>{ $('#f_hours').value = c.dataset.h; });
+});
+
+$('#taskForm').addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  const id = $('#f_id').value;
+  const title = $('#f_title').value.trim();
+  if(!title) return;
+  const priority = document.querySelector('input[name=priority]:checked').value;
+  let deadlineISO;
+  if(deadlineMode==='hours'){
+    const h = parseFloat($('#f_hours').value) || 1;
+    deadlineISO = new Date(Date.now() + h*3600000).toISOString();
+  } else {
+    const v = $('#f_date').value;
+    deadlineISO = v ? new Date(v).toISOString() : new Date(Date.now()+24*3600000).toISOString();
+  }
+
+  if(id){
+    const t = tasks.find(x=>x.id===id);
+    t.title = title; t.client = $('#f_client').value.trim();
+    t.type = $('#f_type').value; t.priority = priority;
+    t.notes = $('#f_notes').value.trim();
+    t.deadline = deadlineISO;
+    t.alerted = false; t.alertedOverdue = false;
+    toast('تم حفظ التعديلات على التذكرة.');
+  } else {
+    tasks.push({
+      id: uid(), ticketNo: nextTicketNo(),
+      title, client: $('#f_client').value.trim(),
+      type: $('#f_type').value, priority,
+      notes: $('#f_notes').value.trim(),
+      createdAt: new Date().toISOString(),
+      deadline: deadlineISO,
+      status: 'new', doneAt: null,
+      alerted: false, alertedOverdue: false
+    });
+    toast('تم إنشاء التذكرة بنجاح.');
+  }
+  await saveTasks();
+  closeModal();
+  renderGrid();
+});
+
+/* ============ CARD ACTIONS (delegated) ============ */
+document.addEventListener('click', async (e)=>{
+  const btn = e.target.closest('[data-act]');
+  if(!btn) return;
+  const id = btn.dataset.id;
+  const t = tasks.find(x=>x.id===id);
+  if(!t) return;
+  const act = btn.dataset.act;
+
+  if(act==='start'){ t.status='in_progress'; await saveTasks(); renderGrid(); }
+  if(act==='done'){
+    t.status='done'; t.doneAt = new Date().toISOString();
+    await saveTasks(); renderGrid();
+    toast('تم تسليم التذكرة. عمل رائع!');
+  }
+  if(act==='del'){
+    if(confirm('حذف هذه التذكرة نهائيًا؟')){
+      tasks = tasks.filter(x=>x.id!==id);
+      await saveTasks(); renderGrid();
+      toast('تم حذف التذكرة.');
+    }
+  }
+  if(act==='edit'){ openModal(id); }
+  if(act==='print'){ printTicket(t); }
+});
+
+/* ============ PRINT ============ */
+function printTicket(t){
+  const d = deriveTask(t);
+  $('#printArea').innerHTML = `
+    <div style="font-family:sans-serif; max-width:480px;">
+      <h2 style="margin-bottom:2px;">تذكرة تصميم — TKT-${String(t.ticketNo).padStart(4,'0')}</h2>
+      <hr>
+      <p><b>العنوان:</b> ${escapeHTML(t.title)}</p>
+      <p><b>العميل:</b> ${t.client ? escapeHTML(t.client) : '—'}</p>
+      <p><b>النوع:</b> ${escapeHTML(t.type)}</p>
+      <p><b>الأولوية:</b> ${({high:'عالية',medium:'متوسطة',low:'منخفضة'})[t.priority]}</p>
+      <p><b>تاريخ الإنشاء:</b> ${fmtDateTime(t.createdAt)}</p>
+      <p><b>الموعد النهائي:</b> ${fmtDateTime(t.deadline)}</p>
+      <p><b>الحالة:</b> ${t.status==='done' ? 'تم التسليم في '+fmtDateTime(t.doneAt) : (d.isOverdue?'متأخرة':'قيد التنفيذ')}</p>
+      ${t.notes ? '<p><b>ملاحظات:</b> '+escapeHTML(t.notes)+'</p>' : ''}
+    </div>`;
+  window.print();
+}
+window.addEventListener('afterprint', ()=>{ $('#printArea').innerHTML=''; });
+
+/* ============ FILTER / SEARCH / SORT EVENTS ============ */
+$$('#filterChips .chip').forEach(chip=>{
+  chip.addEventListener('click', ()=>{
+    filter = chip.dataset.filter;
+    $$('#filterChips .chip').forEach(c=>c.classList.toggle('active', c===chip));
+    renderGrid();
+  });
+});
+$('#searchInput').addEventListener('input', (e)=>{ searchTerm = e.target.value; renderGrid(); });
+$('#sortSel').addEventListener('change', (e)=>{ sortMode = e.target.value; renderGrid(); });
+
+/* ============ FOCUS / THEME / SOUND TOGGLES ============ */
+$('#focusBtn').addEventListener('click', async ()=>{
+  settings.focus = !settings.focus;
+  $('#focusBtn').classList.toggle('active-on', settings.focus);
+  await saveSettings();
+  renderFocus();
+});
+$('#themeBtn').addEventListener('click', async ()=>{
+  settings.theme = settings.theme==='dark' ? 'light' : 'dark';
+  applyTheme();
+  await saveSettings();
+});
+$('#soundBtn').addEventListener('click', async ()=>{
+  settings.sound = !settings.sound;
+  applySound();
+  await saveSettings();
+  toast(settings.sound ? 'تنبيهات الصوت مُفعّلة.' : 'تم إيقاف تنبيهات الصوت.');
+});
+function applyTheme(){
+  document.documentElement.setAttribute('data-theme', settings.theme);
+  $('#themeBtn').innerHTML = settings.theme==='dark' ? ICON.sun : ICON.moon;
+}
+function applySound(){
+  $('#soundBtn').innerHTML = settings.sound ? ICON.bell : ICON.bellOff;
+  $('#soundBtn').classList.toggle('active-on', settings.sound);
+}
+
+/* ============ RESET ============ */
+$('#resetBtn').addEventListener('click', async ()=>{
+  if(confirm('سيتم حذف جميع التذاكر بشكل نهائي. متأكد؟')){
+    tasks = [];
+    await saveTasks();
+    renderGrid();
+    toast('تم حذف جميع التذاكر.');
+  }
+});
+
+/* ============ BACKUP: EXPORT / IMPORT ============ */
+$('#exportBtn').addEventListener('click', ()=>{
+  const payload = JSON.stringify({ tasks, settings, exportedAt: new Date().toISOString() }, null, 2);
+  const blob = new Blob([payload], { type:'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const stamp = new Date().toISOString().slice(0,10);
+  a.href = url; a.download = `tiket-backup-${stamp}.json`;
+  document.body.appendChild(a); a.click(); a.remove();
+  URL.revokeObjectURL(url);
+  toast('تم تنزيل النسخة الاحتياطية.');
+});
+
+$('#importInput').addEventListener('change', (e)=>{
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = async (ev)=>{
+    try{
+      const data = JSON.parse(ev.target.result);
+      if(!Array.isArray(data.tasks)) throw new Error('bad file');
+      if(tasks.length && !confirm('سيتم استبدال تذاكرك الحالية بمحتوى النسخة الاحتياطية. متابعة؟')) return;
+      tasks = data.tasks;
+      if(data.settings) settings = Object.assign(settings, data.settings);
+      await saveTasks(); await saveSettings();
+      applyTheme(); applySound();
+      renderStats(); renderGrid();
+      toast('تم استيراد النسخة الاحتياطية بنجاح.');
+    }catch(err){
+      toast('ملف النسخة الاحتياطية غير صالح.', true);
+    }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+});
+
+/* ============ INIT ============ */
+async function init(){
+  await loadData();
+  applyTheme();
+  applySound();
+  $('#focusBtn').classList.toggle('active-on', settings.focus);
+  renderStats();
+  renderGrid();
+  document.getElementById('loadingScreen').style.opacity='0';
+  setTimeout(()=> document.getElementById('loadingScreen').remove(), 350);
+  setInterval(tick, 15000);
+  if(!cloudAvailable){
+    setTimeout(()=> toast('الحفظ التلقائي غير متاح في هذا العرض. استخدم «تصدير نسخة احتياطية» قبل إغلاق الصفحة و«استيراد نسخة احتياطية» عند فتحها مجددًا.', true), 700);
+  }
+}
+init();
+
+})();
+</script>
+</body>
+</html>
