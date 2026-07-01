@@ -197,7 +197,7 @@
   .inv-preview{ background:#fff; border-radius:10px; padding:30px; border:1px solid var(--line); }
   .inv-head{ display:flex; justify-content:space-between; align-items:flex-start; gap:20px; }
   .inv-head .studio-name{ font-family:'IBM Plex Sans Arabic', sans-serif; font-weight:700; font-size:24px; color:var(--ink);}
-  .inv-head .studio-meta{ font-size:12px; color:var(--ink-soft); margin-top:4px; line-height:1.6;}
+  .inv-head .studio-meta{ font-size:12px; color:var(--ink-soft); margin-top:4px; line-height:1.6; text-align:left; }
   .inv-logo-wide{ max-width:200px; max-height:70px; object-fit:contain; }
   .inv-tagline{ display:flex; justify-content:space-between; align-items:flex-start; margin-top:16px; padding-bottom:10px; }
   .inv-tagline .tagline-ar, .inv-tagline .tagline-en{ display:flex; flex-direction:column; line-height:1.35; }
@@ -1322,12 +1322,12 @@ function printInvoice(id){
   const html = `
     <div class="invoice-page inv-relative">
       <div class="inv-head">
+        ${s.logoDataUrl ? `<img class="inv-logo-wide" src="${s.logoDataUrl}">` : `<div class="studio-name">${escapeHtml(s.studioName||'زياد أبولعيطة')}</div>`}
         <div class="studio-meta">
           ${escapeHtml(s.ownerName||'')}<br>
           ${escapeHtml(s.phone||'')} ${s.phone && s.email ? '•' : ''} ${escapeHtml(s.email||'')}<br>
           ${escapeHtml(s.address||'')}
         </div>
-        ${s.logoDataUrl ? `<img class="inv-logo-wide" src="${s.logoDataUrl}">` : `<div class="studio-name">${escapeHtml(s.studioName||'زياد أبولعيطة')}</div>`}
       </div>
 
       <div class="inv-tagline">
