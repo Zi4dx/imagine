@@ -533,7 +533,7 @@ async function storageGet(key, shared){
       }
       const val = fbDocCache[key];
       return (val !== undefined && val !== null) ? {key, value: val, shared} : null;
-    }catch(e){ console.error(e); return null; }
+    }catch(e){ console.error('Firestore read error:', e); showToast('تعذّر تحميل البيانات من السحابة — تحقق من قواعد Firestore'); return null; }
   }
   const raw = localStorage.getItem('mirsam_'+key);
   return raw ? {key, value: raw, shared} : null;
@@ -1275,8 +1275,16 @@ function removeItemRow(idx){
   refreshItemsTable();
 }
 function updateItem(idx, field, value){
-  invoiceDraft.items[idx][field] = (field==='qty'||field==='price') ? value : value;
-  refreshItemsTable(true);
+  invoiceDraft.items[idx][field] = value;
+  if(field==='qty' || field==='price'){
+    const row = document.querySelector(`#itemsBody tr[data-idx="${idx}"]`);
+    if(row){
+      const it = invoiceDraft.items[idx];
+      const total = (Number(it.qty)||0)*(Number(it.price)||0);
+      row.children[4].textContent = fmtMoney(total);
+    }
+  }
+  recalcLive();
 }
 function refreshItemsTable(skipFocusLoss){
   document.getElementById('itemsBody').innerHTML = invoiceDraft.items.map((it,idx)=> itemRowHtml(it, idx)).join('');
